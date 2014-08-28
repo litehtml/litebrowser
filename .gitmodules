@@ -1,0 +1,15 @@
+[submodule "libs/cairo"]
+	path = libs/cairo
+	url = git@github.com:tordex/cairo.git
+[submodule "libs/freeimage"]
+	path = libs/freeimage
+	url = git@github.com:tordex/freeimage.git
+[submodule "libs/txdib"]
+	path = libs/txdib
+	url = git@github.com:tordex/txdib.git
+[submodule "libs/simpledib"]
+	path = libs/simpledib
+	url = git@github.com:tordex/simpledib.git
+[submodule "libs/litehtml"]
+	path = libs/litehtml
+	url = git@github.com:tordex/litehtml.git
