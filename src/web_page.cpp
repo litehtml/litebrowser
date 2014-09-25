@@ -15,13 +15,20 @@ web_page::~web_page()
 	m_http.stop();
 }
 
-void web_page::set_caption( const wchar_t* caption )
+void web_page::set_caption( const litehtml::tchar_t* caption )
 {
+#ifndef LITEHTML_UTF8
 	m_caption = caption;
+#else
+	LPWSTR captionW = cairo_font::utf8_to_wchar(caption);
+	m_caption = captionW;
+	delete captionW;
+#endif
 }
 
-void web_page::set_base_url( const wchar_t* base_url )
+void web_page::set_base_url( const litehtml::tchar_t* base_url )
 {
+#ifndef LITEHTML_UTF8
 	if(base_url)
 	{
 		if(PathIsRelative(base_url) && !PathIsURL(base_url))
@@ -35,6 +42,23 @@ void web_page::set_base_url( const wchar_t* base_url )
 	{
 		m_base_path = m_url;
 	}
+#else
+	LPWSTR bu = cairo_font::utf8_to_wchar(base_url);
+
+	if(bu)
+	{
+		if(PathIsRelative(bu) && !PathIsURL(bu))
+		{
+			make_url(bu, m_url.c_str(), m_base_path);
+		} else
+		{
+			m_base_path = bu;
+		}
+	} else
+	{
+		m_base_path = m_url;
+	}
+#endif
 }
 
 void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
@@ -103,33 +127,54 @@ void web_page::link( litehtml::document* doc, litehtml::element::ptr el )
 */
 }
 
-void web_page::import_css( std::wstring& text, const std::wstring& url, std::wstring& baseurl )
+void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl )
 {
 	std::wstring css_url;
-	make_url(url.c_str(), baseurl.c_str(), css_url);
+	t_make_url(url.c_str(), baseurl.c_str(), css_url);
 
 	if(download_and_wait(css_url.c_str()))
 	{
-		LPWSTR css = load_text_file(m_waited_file.c_str(), L"UTF-8");
+#ifndef LITEHTML_UTF8
+		LPWSTR css = load_text_file(m_waited_file.c_str(), false, L"UTF-8");
 		if(css)
 		{
 			baseurl = css_url;
 			text = css;
 			delete css;
 		}
+#else
+		LPSTR css = (LPSTR) load_utf8_file(m_waited_file.c_str(), false, L"UTF-8");
+		if(css)
+		{
+			LPSTR css_urlA = cairo_font::wchar_to_utf8(css_url.c_str());
+			baseurl = css_urlA;
+			text = css;
+			delete css;
+			delete css_urlA;
+		}
+#endif
 	}
 }
 
-void web_page::on_anchor_click( const wchar_t* url, litehtml::element::ptr el )
+void web_page::on_anchor_click( const litehtml::tchar_t* url, litehtml::element::ptr el )
 {
 	std::wstring anchor;
-	make_url(url, NULL, anchor);
+	t_make_url(url, NULL, anchor);
 	m_parent->open(anchor.c_str());
 }
 
-void web_page::set_cursor( const wchar_t* cursor )
+void web_page::set_cursor( const litehtml::tchar_t* cursor )
 {
+#ifndef LITEHTML_UTF8
 	m_cursor = cursor;
+#else
+	LPWSTR v = cairo_font::utf8_to_wchar(cursor);
+	if(v)
+	{
+		m_cursor = v;
+		delete v;
+	}
+#endif
 }
 
 CTxDIB* web_page::get_image( LPCWSTR url, bool redraw_on_ready )
@@ -171,6 +216,19 @@ void web_page::load( LPCWSTR url )
 
 void web_page::on_document_loaded( LPCWSTR file, LPCWSTR encoding )
 {
+#ifdef LITEHTML_UTF8
+	litehtml::byte* html_text = load_utf8_file(file, true);
+
+	if(!html_text)
+	{
+		LPCSTR txt = "<h1>Something Wrong</h1>";
+		html_text = new litehtml::byte[lstrlenA(txt) + 1];
+		lstrcpyA((LPSTR) html_text, txt);
+	}
+
+	m_doc = litehtml::document::createFromUTF8(html_text, this, m_parent->get_html_context());
+	delete html_text;
+#else
 	LPWSTR html_text = load_text_file(file, true, encoding);
 
 	if(!html_text)
@@ -182,115 +240,25 @@ void web_page::on_document_loaded( LPCWSTR file, LPCWSTR encoding )
 
 	m_doc = litehtml::document::createFromString(html_text, this, m_parent->get_html_context());
 	delete html_text;
+#endif
 
 	PostMessage(m_parent->wnd(), WM_PAGE_LOADED, 0, 0);
 }
 
 LPWSTR web_page::load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding )
 {
-	CoInitialize(NULL);
+	char* utf8 = (char*) load_utf8_file(path, is_html, defEncoding);
 
-	LPWSTR strW = NULL;
-
-	HANDLE fl = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if(fl != INVALID_HANDLE_VALUE)
+	if(utf8)
 	{
-		DWORD size = GetFileSize(fl, NULL);
-		LPSTR str = (LPSTR) malloc(size + 1);
-
-		DWORD cbRead = 0;
-		ReadFile(fl, str, size, &cbRead, NULL);
-		str[cbRead] = 0;
-		CloseHandle(fl);
-
-		int bom = 0;
-		if(str[0] == '\xEF' && str[1] == '\xBB' && str[2] == '\xBF')
-		{
-			bom = 3;
-		}
-
-		if(is_html)
-		{
-			std::wstring encoding;
-			char* begin = StrStrIA(str, "<meta");
-			while(begin && encoding.empty())
-			{
-				char* end = StrStrIA(begin, ">");
-				char* s1 = StrStrIA(begin, "Content-Type");
-				if(s1 && s1 < end)
-				{
-					s1 = StrStrIA(begin, "charset");
-					if(s1)
-					{
-						s1 += strlen("charset");
-						while(!isalnum(s1[0]) && s1 < end)
-						{
-							s1++;
-						}
-						while((isalnum(s1[0]) || s1[0] == '-') && s1 < end)
-						{
-							encoding += s1[0];
-							s1++;
-						}
-					}
-				}
-				if(encoding.empty())
-				{
-					begin = StrStrIA(begin + strlen("<meta"), "<meta");
-				}
-			}
-
-			if(encoding.empty() && defEncoding)
-			{
-				encoding = defEncoding;
-			}
-
-			if(!encoding.empty())
-			{
-				IMultiLanguage* ml = NULL;
-				HRESULT hr = CoCreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER, IID_IMultiLanguage, (LPVOID*) &ml);	
-
-				MIMECSETINFO charset_src = {0};
-				MIMECSETINFO charset_dst = {0};
-
-				BSTR bstrCharSet = SysAllocString(encoding.c_str());
-				ml->GetCharsetInfo(bstrCharSet, &charset_src);
-				SysFreeString(bstrCharSet);
-
-				bstrCharSet = SysAllocString(L"utf-8");
-				ml->GetCharsetInfo(bstrCharSet, &charset_dst);
-				SysFreeString(bstrCharSet);
-
-				DWORD dwMode = 0;
-				UINT  szDst = (UINT) strlen(str) * 4;
-				LPSTR dst = new char[szDst];
-
-				if(ml->ConvertString(&dwMode, charset_src.uiInternetEncoding, charset_dst.uiInternetEncoding, (LPBYTE) str + bom, NULL, (LPBYTE) dst, &szDst) == S_OK)
-				{
-					dst[szDst] = 0;
-					cbRead = szDst;
-					delete str;
-					str = dst;
-					bom = 0;
-				} else
-				{
-					delete dst;
-				}
-			}
-		}
-
-		if(!strW)
-		{
-			strW = new WCHAR[cbRead + 1];
-			MultiByteToWideChar(CP_UTF8, 0, str + bom, -1, strW, cbRead + 1);
-		}
-
-		free(str);
+		int sz = lstrlenA(utf8);
+		LPWSTR strW = new WCHAR[sz + 1];
+		MultiByteToWideChar(CP_UTF8, 0, utf8, -1, strW, sz + 1);
+		delete utf8;
+		return strW;
 	}
 
-	CoUninitialize();
-
-	return strW;
+	return NULL;
 }
 
 void web_page::on_document_error()
@@ -303,7 +271,7 @@ void web_page::on_image_loaded( LPCWSTR file, LPCWSTR url, bool redraw_only )
 	CTxDIB* img = new CTxDIB;
 	if(img->load(file))
 	{
-		cairo_container::add_image(litehtml::tstring(url), img);
+		cairo_container::add_image(std::wstring(url), img);
 		if(m_doc)
 		{
 			PostMessage(m_parent->wnd(), WM_IMAGE_LOADED, (WPARAM) (redraw_only ? 1 : 0), 0);
@@ -378,6 +346,116 @@ void web_page::get_url( std::wstring& url )
 		url += L"#";
 		url += m_hash;
 	}
+}
+
+unsigned char* web_page::load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding )
+{
+	unsigned char* ret = NULL;
+
+	HANDLE fl = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if(fl != INVALID_HANDLE_VALUE)
+	{
+		DWORD size = GetFileSize(fl, NULL);
+		ret = new unsigned char[size + 1];
+
+		DWORD cbRead = 0;
+		if(size >= 3)
+		{
+			ReadFile(fl, ret, 3, &cbRead, NULL);
+			if(ret[0] == '\xEF' && ret[1] == '\xBB' && ret[2] == '\xBF')
+			{
+				ReadFile(fl, ret, size - 3, &cbRead, NULL);
+				ret[cbRead] = 0;
+			} else
+			{
+				ReadFile(fl, ret + 3, size - 3, &cbRead, NULL);
+				ret[cbRead + 3] = 0;
+			}
+		}
+		CloseHandle(fl);
+	}
+
+	// try to convert encoding
+	if(is_html)
+	{
+		std::wstring encoding;
+		char* begin = StrStrIA((LPSTR) ret, "<meta");
+		while(begin && encoding.empty())
+		{
+			char* end = StrStrIA(begin, ">");
+			char* s1 = StrStrIA(begin, "Content-Type");
+			if(s1 && s1 < end)
+			{
+				s1 = StrStrIA(begin, "charset");
+				if(s1)
+				{
+					s1 += strlen("charset");
+					while(!isalnum(s1[0]) && s1 < end)
+					{
+						s1++;
+					}
+					while((isalnum(s1[0]) || s1[0] == '-') && s1 < end)
+					{
+						encoding += s1[0];
+						s1++;
+					}
+				}
+			}
+			if(encoding.empty())
+			{
+				begin = StrStrIA(begin + strlen("<meta"), "<meta");
+			}
+		}
+
+		if(encoding.empty() && defEncoding)
+		{
+			encoding = defEncoding;
+		}
+
+		if(!encoding.empty())
+		{
+			if(!StrCmpI(encoding.c_str(), L"UTF-8"))
+			{
+				encoding.clear();
+			}
+		}
+
+		if(!encoding.empty())
+		{
+			CoInitialize(NULL);
+
+			IMultiLanguage* ml = NULL;
+			HRESULT hr = CoCreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER, IID_IMultiLanguage, (LPVOID*) &ml);	
+
+			MIMECSETINFO charset_src = {0};
+			MIMECSETINFO charset_dst = {0};
+
+			BSTR bstrCharSet = SysAllocString(encoding.c_str());
+			ml->GetCharsetInfo(bstrCharSet, &charset_src);
+			SysFreeString(bstrCharSet);
+
+			bstrCharSet = SysAllocString(L"utf-8");
+			ml->GetCharsetInfo(bstrCharSet, &charset_dst);
+			SysFreeString(bstrCharSet);
+
+			DWORD dwMode = 0;
+			UINT  szDst = (UINT) strlen((LPSTR) ret) * 4;
+			LPSTR dst = new char[szDst];
+
+			if(ml->ConvertString(&dwMode, charset_src.uiInternetEncoding, charset_dst.uiInternetEncoding, (LPBYTE) ret, NULL, (LPBYTE) dst, &szDst) == S_OK)
+			{
+				dst[szDst] = 0;
+				delete ret;
+				ret = (unsigned char*) dst;
+			} else
+			{
+				delete dst;
+			}
+			CoUninitialize();
+		}
+	}
+
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////

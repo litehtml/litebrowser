@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../containers/cairo/cairo_container.h"
+#include "../containers/cairo/cairo_font.h"
 #include "tordexhttp.h"
 
 class CHTMLViewWnd;
@@ -33,18 +34,19 @@ public:
 	void get_url(std::wstring& url);
 
 	// litehtml::document_container members
-	virtual	void		set_caption(const wchar_t* caption);
-	virtual	void		set_base_url(const wchar_t* base_url);
+	virtual	void		set_caption(const litehtml::tchar_t* caption);
+	virtual	void		set_base_url(const litehtml::tchar_t* base_url);
 	virtual	void		link(litehtml::document* doc, litehtml::element::ptr el);
-	virtual void		import_css(std::wstring& text, const std::wstring& url, std::wstring& baseurl);
-	virtual	void		on_anchor_click(const wchar_t* url, litehtml::element::ptr el);
-	virtual	void		set_cursor(const wchar_t* cursor);
+	virtual void		import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
+	virtual	void		on_anchor_click(const litehtml::tchar_t* url, litehtml::element::ptr el);
+	virtual	void		set_cursor(const litehtml::tchar_t* cursor);
 
 	virtual void		make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out);
 	virtual CTxDIB*		get_image(LPCWSTR url, bool redraw_on_ready);
 	virtual void		get_client_rect(litehtml::position& client);
 private:
 	LPWSTR	load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");
+	unsigned char*	load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");
 	BOOL	download_and_wait(LPCWSTR url);
 };
 

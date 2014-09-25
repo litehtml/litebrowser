@@ -3,7 +3,11 @@
 #include <WindowsX.h>
 #include "BrowserWnd.h"
 
-using namespace Gdiplus;
+#ifdef LITEHTML_UTF8
+	#define str_cmp	strcmp
+#else
+	#define str_cmp	lstrcmp
+#endif
 
 CToolbarWnd::CToolbarWnd( HINSTANCE hInst, CBrowserWnd* parent )
 {
@@ -29,7 +33,7 @@ CToolbarWnd::CToolbarWnd( HINSTANCE hInst, CBrowserWnd* parent )
 		RegisterClass(&wc);
 	}
 
-	m_context.load_master_stylesheet(L"html,div,body { display: block; } head,style { display: none; }");
+	m_context.load_master_stylesheet(_t("html,div,body { display: block; } head,style { display: none; }"));
 }
 CToolbarWnd::~CToolbarWnd(void)
 {
@@ -157,6 +161,7 @@ void CToolbarWnd::OnDestroy()
 
 void CToolbarWnd::create( int x, int y, int width, HWND parent )
 {
+#ifndef LITEHTML_UTF8
 	LPWSTR html = NULL;
 
 	HRSRC hResource = ::FindResource(m_hInst, L"toolbar.html", RT_HTML);
@@ -174,7 +179,25 @@ void CToolbarWnd::create( int x, int y, int width, HWND parent )
 			}
 		}
 	}
+#else
+	LPSTR html = NULL;
 
+	HRSRC hResource = ::FindResource(m_hInst, L"toolbar.html", RT_HTML);
+	if(hResource)
+	{
+		DWORD imageSize = ::SizeofResource(m_hInst, hResource);
+		if(imageSize)
+		{
+			LPCSTR pResourceData = (LPCSTR) ::LockResource(::LoadResource(m_hInst, hResource));
+			if(pResourceData)
+			{
+				html = new CHAR[imageSize + 1];
+				lstrcpynA(html, pResourceData, imageSize);
+				html[imageSize] = 0;
+			}
+		}
+	}
+#endif
 	m_doc = litehtml::document::createFromString(html, this, &m_context);
 	delete html;
 	m_doc->render(width);
@@ -199,12 +222,12 @@ CTxDIB* CToolbarWnd::get_image( LPCWSTR url, bool redraw_on_ready )
 	return img;
 }
 
-void CToolbarWnd::set_caption( const wchar_t* caption )
+void CToolbarWnd::set_caption( const litehtml::tchar_t* caption )
 {
 
 }
 
-void CToolbarWnd::set_base_url( const wchar_t* base_url )
+void CToolbarWnd::set_base_url( const litehtml::tchar_t* base_url )
 {
 
 }
@@ -328,18 +351,18 @@ struct
 	{NULL,						NULL},
 };
 
-void CToolbarWnd::on_anchor_click( const wchar_t* url, litehtml::element::ptr el )
+void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, litehtml::element::ptr el )
 {
-	if(!wcscmp(url, L"back"))
+	if(!str_cmp(url, _t("back")))
 	{
 		m_parent->back();
-	} else if(!wcscmp(url, L"forward"))
+	} else if(!str_cmp(url, _t("forward")))
 	{
 		m_parent->forward();
-	} else if(!wcscmp(url, L"reload"))
+	} else if(!str_cmp(url, _t("reload")))
 	{
 		m_parent->reload();
-	} else if(!wcscmp(url, L"bookmarks"))
+	} else if(!str_cmp(url, _t("bookmarks")))
 	{
 		litehtml::position pos = el->get_placement();
 		POINT pt;
@@ -361,7 +384,7 @@ void CToolbarWnd::on_anchor_click( const wchar_t* url, litehtml::element::ptr el
 		{
 			m_parent->open(g_bookmarks[ret - 1].url);
 		}
-	} else if(!wcscmp(url, L"settings"))
+	} else if(!str_cmp(url, _t("settings")))
 	{
 		litehtml::position pos = el->get_placement();
 		POINT pt;
@@ -390,12 +413,12 @@ void CToolbarWnd::on_anchor_click( const wchar_t* url, litehtml::element::ptr el
 	}
 }
 
-void CToolbarWnd::set_cursor( const wchar_t* cursor )
+void CToolbarWnd::set_cursor( const litehtml::tchar_t* cursor )
 {
 
 }
 
-void CToolbarWnd::import_css( std::wstring& text, const std::wstring& url, std::wstring& baseurl )
+void CToolbarWnd::import_css( litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl )
 {
 
 }

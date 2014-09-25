@@ -1,9 +1,11 @@
 #pragma once
 
+typedef std::vector<std::wstring> string_vector;
+
 class web_history
 {
-	litehtml::string_vector				m_items;
-	litehtml::string_vector::size_type	m_current_item;
+	string_vector				m_items;
+	string_vector::size_type	m_current_item;
 public:
 	web_history();
 	virtual ~web_history();
