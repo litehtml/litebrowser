@@ -226,7 +226,7 @@ void web_page::on_document_loaded( LPCWSTR file, LPCWSTR encoding )
 		lstrcpyA((LPSTR) html_text, txt);
 	}
 
-	m_doc = litehtml::document::createFromUTF8(html_text, this, m_parent->get_html_context());
+	m_doc = litehtml::document::createFromUTF8((const char*) html_text, this, m_parent->get_html_context());
 	delete html_text;
 #else
 	LPWSTR html_text = load_text_file(file, true, encoding);
