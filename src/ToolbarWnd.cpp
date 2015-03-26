@@ -210,13 +210,12 @@ void CToolbarWnd::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
 	out = url;
 }
 
-CTxDIB* CToolbarWnd::get_image( LPCWSTR url, bool redraw_on_ready )
+cairo_container::image_ptr CToolbarWnd::get_image(LPCWSTR url, bool redraw_on_ready)
 {
-	CTxDIB* img = new CTxDIB;
+	cairo_container::image_ptr img = cairo_container::image_ptr(new CTxDIB);
 	if(!img->load(FindResource(m_hInst, url, RT_HTML), m_hInst))
 	{
-		delete img;
-		img = NULL;
+		img = nullptr;
 	}
 
 	return img;
@@ -242,7 +241,7 @@ int CToolbarWnd::set_width( int width )
 	if(m_doc)
 	{
 		m_doc->render(width);
-
+		
 		return m_doc->height();
 	}
 	return 0;

@@ -177,9 +177,9 @@ void web_page::set_cursor( const litehtml::tchar_t* cursor )
 #endif
 }
 
-CTxDIB* web_page::get_image( LPCWSTR url, bool redraw_on_ready )
+cairo_container::image_ptr web_page::get_image(LPCWSTR url, bool redraw_on_ready)
 {
-	CTxDIB* img = NULL;
+	cairo_container::image_ptr img;
 	if(PathIsURL(url))
 	{
 		if(redraw_on_ready)
@@ -191,11 +191,10 @@ CTxDIB* web_page::get_image( LPCWSTR url, bool redraw_on_ready )
 		}
 	} else
 	{
-		img = new CTxDIB;
+		img = cairo_container::image_ptr(new CTxDIB);
 		if(!img->load(url))
 		{
-			delete img;
-			img = NULL;
+			img = nullptr;
 		}
 	}
 	return img;
@@ -268,7 +267,7 @@ void web_page::on_document_error()
 
 void web_page::on_image_loaded( LPCWSTR file, LPCWSTR url, bool redraw_only )
 {
-	CTxDIB* img = new CTxDIB;
+	cairo_container::image_ptr img = cairo_container::image_ptr(new CTxDIB);
 	if(img->load(file))
 	{
 		cairo_container::add_image(std::wstring(url), img);
@@ -276,9 +275,6 @@ void web_page::on_image_loaded( LPCWSTR file, LPCWSTR url, bool redraw_only )
 		{
 			PostMessage(m_parent->wnd(), WM_IMAGE_LOADED, (WPARAM) (redraw_only ? 1 : 0), 0);
 		}
-	} else
-	{
-		delete img;
 	}
 }
 
