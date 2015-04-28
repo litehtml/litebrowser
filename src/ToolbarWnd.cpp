@@ -338,7 +338,7 @@ struct
 } g_bookmarks[] = 
 {
 	{L"DMOZ",					L"http://www.dmoz.org/"},
-	{L"litehtml project",		L"https://code.google.com/p/litehtml/"},
+	{L"litehtml project",		L"https://github.com/litehtml/litehtml"},
 	{L"litehtml website",		L"http://www.litehtml.com/"},
 	{L"True Launch Bar",		L"http://www.truelaunchbar.com/"},
 	{L"Tordex",					L"http://www.tordex.com/"},
@@ -346,6 +346,7 @@ struct
 	{L"Text Accelerator",		L"http://www.textaccelerator.com/"},
 	{L"Wiki: Web Browser",		L"http://en.wikipedia.org/wiki/Web_browser"},
 	{L"Wiki: Obama",			L"http://en.wikipedia.org/wiki/Obama"},
+	{L"Code Project",			L"http://www.codeproject.com/"},
 
 	{NULL,						NULL},
 };
