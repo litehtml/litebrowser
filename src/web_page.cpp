@@ -65,16 +65,46 @@ void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
 {
 	if(PathIsRelative(url) && !PathIsURL(url))
 	{
-		WCHAR abs_url[512];
-		DWORD dl = 512;
 		if(basepath && basepath[0])
 		{
-			UrlCombine(basepath, url, abs_url, &dl, 0);
-		} else
-		{
-			UrlCombine(m_base_path.c_str(), url, abs_url, &dl, 0);
+			DWORD dl = lstrlen(url) + lstrlen(basepath) + 1;
+			LPWSTR abs_url = new WCHAR[dl];
+			HRESULT res = UrlCombine(basepath, url, abs_url, &dl, 0);
+			if (res == E_POINTER)
+			{
+				delete abs_url;
+				abs_url = new WCHAR[dl + 1];
+				if (UrlCombine(basepath, url, abs_url, &dl, 0) == S_OK)
+				{
+					out = abs_url;
+				}
+			}
+			else if (res == S_OK)
+			{
+				out = abs_url;
+			}
+			delete abs_url;
 		}
-		out = abs_url;
+		else
+		{
+			DWORD dl = lstrlen(url) + (DWORD) m_base_path.length() + 1;
+			LPWSTR abs_url = new WCHAR[dl];
+			HRESULT res = UrlCombine(m_base_path.c_str(), url, abs_url, &dl, 0);
+			if (res == E_POINTER)
+			{
+				delete abs_url;
+				abs_url = new WCHAR[dl + 1];
+				if (UrlCombine(m_base_path.c_str(), url, abs_url, &dl, 0) == S_OK)
+				{
+					out = abs_url;
+				}
+			}
+			else if (res == S_OK)
+			{
+				out = abs_url;
+			}
+			delete abs_url;
+		}
 	} else
 	{
 		if(PathIsURL(url))
@@ -82,10 +112,23 @@ void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
 			out = url;
 		} else
 		{
-			WCHAR abs_url[512];
-			DWORD dl = 512;
-			UrlCreateFromPath(url, abs_url, &dl, 0);
-			out = abs_url;
+			DWORD dl = lstrlen(url) + 1;
+			LPWSTR abs_url = new WCHAR[dl];
+			HRESULT res = UrlCreateFromPath(url, abs_url, &dl, 0);
+			if (res == E_POINTER)
+			{
+				delete abs_url;
+				abs_url = new WCHAR[dl + 1];
+				if (UrlCreateFromPath(url, abs_url, &dl, 0) == S_OK)
+				{
+					out = abs_url;
+				}
+			}
+			else if (res == S_OK)
+			{
+				out = abs_url;
+			}
+			delete abs_url;
 		}
 	}
 	if(out.substr(0, 8) == L"file:///")
