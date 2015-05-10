@@ -7,7 +7,7 @@ CBrowserWnd::CBrowserWnd(HINSTANCE hInst)
 {
 	m_hInst		= hInst;
 	m_hWnd		= NULL;
-	m_view		= new CHTMLViewWnd(hInst, &m_browser_context);
+	m_view		= new CHTMLViewWnd(hInst, &m_browser_context, this);
 #ifndef NO_TOOLBAR
 	m_toolbar	= new CToolbarWnd(hInst, this);
 #endif
@@ -211,4 +211,15 @@ void CBrowserWnd::calc_time()
 	{
 		m_view->render(TRUE);
 	}
+}
+
+void CBrowserWnd::on_page_loaded(LPCWSTR url)
+{
+	if (m_view)
+	{
+		SetFocus(m_view->wnd());
+	}
+#ifndef NO_TOOLBAR
+	m_toolbar->on_page_loaded(url);
+#endif
 }

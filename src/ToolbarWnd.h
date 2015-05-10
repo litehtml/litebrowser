@@ -1,6 +1,7 @@
 #pragma once
 #include "..\containers\cairo\cairo_container.h"
 #include "dib.h"
+#include "el_omnibox.h"
 
 #define TOOLBARWND_CLASS	L"TOOLBAR_WINDOW"
 
@@ -13,6 +14,9 @@ class CToolbarWnd : public cairo_container
 	litehtml::context		m_context;
 	litehtml::document::ptr	m_doc;
 	CBrowserWnd*			m_parent;
+	el_omnibox*				m_omnibox;
+	litehtml::tstring		m_cursor;
+	BOOL					m_inCapture;
 public:
 	CToolbarWnd(HINSTANCE hInst, CBrowserWnd* parent);
 	virtual ~CToolbarWnd(void);
@@ -28,6 +32,7 @@ public:
 		return 0;
 	}
 	int set_width(int width);
+	void on_page_loaded(LPCWSTR url);
 
 	// cairo_container members
 	virtual void			make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out);
@@ -40,6 +45,7 @@ public:
 	virtual void	import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
 	virtual	void	on_anchor_click(const litehtml::tchar_t* url, litehtml::element::ptr el);
 	virtual	void	set_cursor(const litehtml::tchar_t* cursor);
+	virtual litehtml::element* create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, litehtml::document* doc);
 
 protected:
 	virtual void	OnCreate();
@@ -50,9 +56,12 @@ protected:
 	virtual void	OnLButtonDown(int x, int y);
 	virtual void	OnLButtonUp(int x, int y);
 	virtual void	OnMouseLeave();
+	virtual void	OnOmniboxClicked();
 
 	virtual void	get_client_rect(litehtml::position& client);
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam);
+	void render_toolbar(int width);
+	void update_cursor();
 };

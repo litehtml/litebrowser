@@ -25,9 +25,9 @@ public:
 	virtual ~web_page();
 
 	void load(LPCWSTR url);
-	void on_document_loaded(LPCWSTR file, LPCWSTR encoding);
+	void on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUrl);
 	void on_image_loaded(LPCWSTR file, LPCWSTR url, bool redraw_only);
-	void on_document_error();
+	void on_document_error(DWORD dwError, LPCWSTR errMsg);
 	void on_waited_finished(DWORD dwError, LPCWSTR file);
 	void add_ref();
 	void release();
@@ -65,6 +65,7 @@ class web_file : public tordex::http_request
 	web_file_type	m_type;
 	HANDLE			m_hFile;
 	LPVOID			m_data;
+	std::wstring	m_realUrl;
 public:
 	web_file(web_page* page, web_file_type type, LPVOID data = NULL);
 	virtual ~web_file();

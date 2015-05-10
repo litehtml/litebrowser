@@ -8,6 +8,7 @@
 #define WM_PAGE_LOADED		(WM_USER + 1001)
 
 using namespace litehtml;
+class CBrowserWnd;
 
 class CHTMLViewWnd
 {
@@ -23,8 +24,9 @@ class CHTMLViewWnd
 	web_page*					m_page_next;
 	CRITICAL_SECTION			m_sync;
 	simpledib::dib				m_dib;
+	CBrowserWnd*				m_parent;
 public:
-	CHTMLViewWnd(HINSTANCE	hInst, litehtml::context* ctx);
+	CHTMLViewWnd(HINSTANCE	hInst, litehtml::context* ctx, CBrowserWnd* parent);
 	virtual ~CHTMLViewWnd(void);
 
 	void				create(int x, int y, int width, int height, HWND parent);

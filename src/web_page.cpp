@@ -252,12 +252,17 @@ void web_page::load( LPCWSTR url )
 		m_http.download_file( url, new web_file(this, web_file_document) );
 	} else
 	{
-		on_document_loaded(url, L"UTF-8");
+		on_document_loaded(url, L"UTF-8", NULL);
 	}
 }
 
-void web_page::on_document_loaded( LPCWSTR file, LPCWSTR encoding )
+void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUrl)
 {
+	if (realUrl)
+	{
+		m_url = realUrl;
+	}
+
 #ifdef LITEHTML_UTF8
 	litehtml::byte* html_text = load_utf8_file(file, true);
 
@@ -303,9 +308,31 @@ LPWSTR web_page::load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding
 	return NULL;
 }
 
-void web_page::on_document_error()
+void web_page::on_document_error(DWORD dwError, LPCWSTR errMsg)
 {
-	//delete this;
+#ifdef LITEHTML_UTF8
+	std::string txt = "<h1>Something Wrong</h1>";
+	if(errMsg)
+	{
+		LPSTR errMsg_utf8 = cairo_font::wchar_to_utf8(errMsg);
+		txt += "<p>";
+		txt += errMsg_utf8;
+		txt += "</p>";
+		delete errMsg_utf8;
+	}
+	m_doc = litehtml::document::createFromUTF8((const char*)txt.c_str(), this, m_parent->get_html_context());
+#else
+	std::wstring txt = L"<h1>Something Wrong</h1>";
+	if (errMsg)
+	{
+		txt += L"<p>";
+		txt += errMsg;
+		txt += L"</p>";
+	}
+	m_doc = litehtml::document::createFromString(txt.c_str(), this, m_parent->get_html_context());
+#endif
+
+	PostMessage(m_parent->wnd(), WM_PAGE_LOADED, 0, 0);
 }
 
 void web_page::on_image_loaded( LPCWSTR file, LPCWSTR url, bool redraw_only )
@@ -542,7 +569,7 @@ void web_file::OnFinish( DWORD dwError, LPCWSTR errMsg )
 		switch(m_type)
 		{
 		case web_file_document:
-			m_page->on_document_error();
+			m_page->on_document_error(dwError, errMsg);
 			break;
 		case web_file_waited:
 			m_page->on_waited_finished(dwError, m_file);
@@ -553,7 +580,7 @@ void web_file::OnFinish( DWORD dwError, LPCWSTR errMsg )
 		switch(m_type)
 		{
 		case web_file_document:
-			m_page->on_document_loaded(m_file, L"UTF-8");
+			m_page->on_document_loaded(m_file, L"UTF-8", m_realUrl.empty() ? NULL : m_realUrl.c_str());
 			break;
 		case web_file_image_redraw:
 			m_page->on_image_loaded(m_file, m_url.c_str(), true);
@@ -579,5 +606,10 @@ void web_file::OnData( LPCBYTE data, DWORD len, ULONG64 downloaded, ULONG64 tota
 
 void web_file::OnHeadersReady( HINTERNET hRequest )
 {
-
+	WCHAR buf[2048];
+	DWORD len = sizeof(buf);
+	if (WinHttpQueryOption(m_hRequest, WINHTTP_OPTION_URL, buf, &len))
+	{
+		m_realUrl = buf;
+	}
 }

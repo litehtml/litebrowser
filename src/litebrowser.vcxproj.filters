@@ -42,6 +42,15 @@
     <ClCompile Include="web_page.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="el_omnibox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TxThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sl_edit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrowserWnd.h">
@@ -78,6 +87,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="web_page.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="el_omnibox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TxThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sl_edit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ctrl_container.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

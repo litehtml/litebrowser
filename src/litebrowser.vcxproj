@@ -186,7 +186,7 @@
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../libs/litehtml/include;../libs/cairo/src;../libs/txdib;../libs/simpledib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NO_TOOLBAR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_NO_TOOLBAR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -379,10 +379,13 @@
     <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_container.cpp" />
     <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_font.cpp" />
     <ClCompile Include="BrowserWnd.cpp" />
+    <ClCompile Include="el_omnibox.cpp" />
     <ClCompile Include="HtmlViewWnd.cpp" />
     <ClCompile Include="litebrowser.cpp" />
+    <ClCompile Include="sl_edit.cpp" />
     <ClCompile Include="ToolbarWnd.cpp" />
     <ClCompile Include="tordexhttp.cpp" />
+    <ClCompile Include="TxThread.cpp" />
     <ClCompile Include="web_history.cpp" />
     <ClCompile Include="web_page.cpp" />
   </ItemGroup>
@@ -390,13 +393,17 @@
     <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_container.h" />
     <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_font.h" />
     <ClInclude Include="BrowserWnd.h" />
+    <ClInclude Include="ctrl_container.h" />
+    <ClInclude Include="el_omnibox.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="HtmlViewWnd.h" />
     <ClInclude Include="litebrowser.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="sl_edit.h" />
     <ClInclude Include="ToolbarWnd.h" />
     <ClInclude Include="tordexhttp.h" />
+    <ClInclude Include="TxThread.h" />
     <ClInclude Include="web_history.h" />
     <ClInclude Include="web_page.h" />
   </ItemGroup>

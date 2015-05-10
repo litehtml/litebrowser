@@ -3,9 +3,11 @@
 #include <WindowsX.h>
 #include <algorithm>
 #include <strsafe.h>
+#include "BrowserWnd.h"
 
-CHTMLViewWnd::CHTMLViewWnd(HINSTANCE hInst, litehtml::context* ctx)
+CHTMLViewWnd::CHTMLViewWnd(HINSTANCE hInst, litehtml::context* ctx, CBrowserWnd* parent)
 {
+	m_parent		= parent;
 	m_hInst			= hInst;
 	m_hWnd			= NULL;
 	m_top			= 0;
@@ -512,6 +514,30 @@ void CHTMLViewWnd::OnKeyDown( UINT vKey )
 	case VK_F5:
 		refresh();
 		break;
+	case VK_NEXT:
+		OnVScroll(0, SB_PAGEDOWN);
+		break;
+	case VK_PRIOR:
+		OnVScroll(0, SB_PAGEUP);
+		break;
+	case VK_DOWN:
+		OnVScroll(0, SB_LINEDOWN);
+		break;
+	case VK_UP:
+		OnVScroll(0, SB_LINEUP);
+		break;
+	case VK_HOME:
+		scroll_to(m_left, 0);
+		break;
+	case VK_END:
+		scroll_to(m_left, m_max_top);
+		break;
+	case VK_LEFT:
+		OnHScroll(0, SB_LINELEFT);
+		break;
+	case VK_RIGHT:
+		OnHScroll(0, SB_LINERIGHT);
+		break;
 	}
 }
 
@@ -742,6 +768,7 @@ web_page* CHTMLViewWnd::get_page(bool with_lock)
 
 void CHTMLViewWnd::OnPageReady()
 {
+	std::wstring url;
 	lock();
 	web_page* page = m_page_next;
 	unlock();
@@ -762,6 +789,7 @@ void CHTMLViewWnd::OnPageReady()
 		m_page_next = NULL;
 		is_ok = true;
 		hash = m_page->m_hash;
+		url = m_page->m_url;
 	}
 
 	unlock();
@@ -776,6 +804,7 @@ void CHTMLViewWnd::OnPageReady()
 		redraw(NULL, FALSE);
 		set_caption();
 		update_history();
+		m_parent->on_page_loaded(url.c_str());
 	}
 }
 

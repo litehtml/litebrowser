@@ -68,6 +68,18 @@
                 height: 29px;
                 background-image: url('addr-center.png');
             }
+            #omnibox
+            {
+                cursor: text;
+                font-family: Tahoma;
+                font-size: 0.9em;
+                position: absolute;
+                top: 0px;
+                right: 9px;
+                left: 9px;
+                height: 29px;
+                background-image: url('addr-center.png');
+            }
         </style>
     </head>
     <body>
@@ -80,7 +92,7 @@
             <a href="bookmarks" class="button-right" id="bookmarks"></a>
             <div class="omni-box">
                 <div class="addr-left"></div>
-                <div class="addr-center"></div>
+                <input type="text" id="omnibox"/>
                 <div class="addr-right"></div>
             </div>
         </div>

@@ -25,6 +25,7 @@ public:
 	void forward();
 	void reload();
 	void calc_time();
+	void on_page_loaded(LPCWSTR url);
 
 protected:
 	virtual void OnCreate();

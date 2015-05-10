@@ -77,9 +77,8 @@ VOID CALLBACK tordex::http::http_callback( HINTERNET hInternet, DWORD_PTR dwCont
 			break;
 
 		case WINHTTP_CALLBACK_STATUS_REQUEST_ERROR:
-			/*dwError = */request->onRequestError(((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
+			dwError = request->onRequestError(((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
 			break;
-
 		}
 
 		if(dwError != ERROR_SUCCESS)
