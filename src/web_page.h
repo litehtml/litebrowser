@@ -43,7 +43,7 @@ public:
 
 	virtual void		make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out);
 	virtual cairo_container::image_ptr	get_image(LPCWSTR url, bool redraw_on_ready);
-	virtual void		get_client_rect(litehtml::position& client);
+	virtual void		get_client_rect(litehtml::position& client)  const;
 private:
 	LPWSTR	load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");
 	unsigned char*	load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");

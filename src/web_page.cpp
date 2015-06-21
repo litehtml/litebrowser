@@ -384,7 +384,7 @@ void web_page::on_waited_finished( DWORD dwError, LPCWSTR file )
 	SetEvent(m_hWaitDownload);
 }
 
-void web_page::get_client_rect( litehtml::position& client )
+void web_page::get_client_rect( litehtml::position& client ) const
 {
 	m_parent->get_client_rect(client);
 }

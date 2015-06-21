@@ -58,7 +58,7 @@ protected:
 	virtual void	OnMouseLeave();
 	virtual void	OnOmniboxClicked();
 
-	virtual void	get_client_rect(litehtml::position& client);
+	virtual void	get_client_rect(litehtml::position& client) const;
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam);

@@ -591,7 +591,7 @@ void CToolbarWnd::import_css(litehtml::tstring& text, const litehtml::tstring& u
 
 }
 
-void CToolbarWnd::get_client_rect( litehtml::position& client )
+void CToolbarWnd::get_client_rect( litehtml::position& client ) const
 {
 	RECT rcClient;
 	GetClientRect(m_hWnd, &rcClient);

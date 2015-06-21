@@ -714,7 +714,7 @@ void CHTMLViewWnd::update_cursor()
 	}
 }
 
-void CHTMLViewWnd::get_client_rect( litehtml::position& client )
+void CHTMLViewWnd::get_client_rect( litehtml::position& client ) const
 {
 	RECT rcClient;
 	GetClientRect(m_hWnd, &rcClient);

@@ -44,7 +44,7 @@ public:
 	web_page*			get_page(bool with_lock = true);
 
 	void				render(BOOL calc_time = FALSE, BOOL do_redraw = TRUE);
-	void				get_client_rect(litehtml::position& client);
+	void				get_client_rect(litehtml::position& client) const;
 	void				show_hash(std::wstring& hash);
 	void				update_history();
 
