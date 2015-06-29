@@ -14,7 +14,7 @@ class CToolbarWnd : public cairo_container
 	litehtml::context		m_context;
 	litehtml::document::ptr	m_doc;
 	CBrowserWnd*			m_parent;
-	el_omnibox*				m_omnibox;
+	std::shared_ptr<el_omnibox>	m_omnibox;
 	litehtml::tstring		m_cursor;
 	BOOL					m_inCapture;
 public:
@@ -41,11 +41,11 @@ public:
 	// litehtml::document_container members
 	virtual	void	set_caption(const litehtml::tchar_t* caption);
 	virtual	void	set_base_url(const litehtml::tchar_t* base_url);
-	virtual	void	link(litehtml::document* doc, litehtml::element::ptr el);
+	virtual	void	link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el);
 	virtual void	import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
 	virtual	void	on_anchor_click(const litehtml::tchar_t* url, litehtml::element::ptr el);
 	virtual	void	set_cursor(const litehtml::tchar_t* cursor);
-	virtual litehtml::element* create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, litehtml::document* doc);
+	virtual std::shared_ptr<litehtml::element> create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, std::shared_ptr<litehtml::document>& doc);
 
 protected:
 	virtual void	OnCreate();

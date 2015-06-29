@@ -9,7 +9,7 @@ class el_omnibox : public litehtml::html_tag
 	HWND m_hWndParent;
 	BOOL m_haveFocus;
 public:
-	el_omnibox(litehtml::document* doc, HWND parent, cairo_container* container);
+	el_omnibox(std::shared_ptr<litehtml::document>& doc, HWND parent, cairo_container* container);
 	~el_omnibox();
 
 	virtual void draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::position* clip);

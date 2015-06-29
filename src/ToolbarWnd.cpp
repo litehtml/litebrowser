@@ -42,7 +42,6 @@ CToolbarWnd::~CToolbarWnd(void)
 {
 	if (m_omnibox)
 	{
-		m_omnibox->release();
 		m_omnibox = nullptr;
 	}
 }
@@ -336,7 +335,7 @@ void CToolbarWnd::set_base_url( const litehtml::tchar_t* base_url )
 
 }
 
-void CToolbarWnd::link( litehtml::document* doc, litehtml::element::ptr el )
+void CToolbarWnd::link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el)
 {
 
 }
@@ -562,7 +561,7 @@ void CToolbarWnd::set_cursor( const litehtml::tchar_t* cursor )
 	m_cursor = cursor;
 }
 
-litehtml::element* CToolbarWnd::create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, litehtml::document* doc)
+std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, std::shared_ptr<litehtml::document>& doc)
 {
 	if (!t_strcasecmp(tag_name, _t("input")))
 	{
@@ -573,12 +572,10 @@ litehtml::element* CToolbarWnd::create_element(const litehtml::tchar_t* tag_name
 			{
 				if (m_omnibox)
 				{
-					m_omnibox->release();
 					m_omnibox = nullptr;
 				}
 
-				m_omnibox = new el_omnibox(doc, m_hWnd, this);
-				m_omnibox->addRef();
+				m_omnibox = std::make_shared<el_omnibox>(doc, m_hWnd, this);
 				return m_omnibox;
 			}
 		}

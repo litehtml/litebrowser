@@ -141,33 +141,8 @@ void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
 	}
 }
 
-void web_page::link( litehtml::document* doc, litehtml::element::ptr el )
+void web_page::link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el)
 {
-/*
-	const wchar_t* rel = el->get_attr(L"rel");
-	if(rel && !wcscmp(rel, L"stylesheet"))
-	{
-		const wchar_t* media = el->get_attr(L"media", L"screen");
-		if(media && (wcsstr(media, L"screen") || wcsstr(media, L"all")))
-		{
-			const wchar_t* href = el->get_attr(L"href");
-			if(href && href[0])
-			{
-				std::wstring url;
-				make_url(href, NULL, url);
-				if(download_and_wait(url.c_str()))
-				{
-					LPWSTR css = load_text_file(m_waited_file.c_str(), L"UTF-8");
-					if(css)
-					{
-						doc->add_stylesheet(css, url.c_str());
-						delete css;
-					}
-				}
-			}
-		}
-	}
-*/
 }
 
 void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl )

@@ -36,7 +36,7 @@ public:
 	// litehtml::document_container members
 	virtual	void		set_caption(const litehtml::tchar_t* caption);
 	virtual	void		set_base_url(const litehtml::tchar_t* base_url);
-	virtual	void		link(litehtml::document* doc, litehtml::element::ptr el);
+	virtual	void		link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el);
 	virtual void		import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
 	virtual	void		on_anchor_click(const litehtml::tchar_t* url, litehtml::element::ptr el);
 	virtual	void		set_cursor(const litehtml::tchar_t* cursor);
