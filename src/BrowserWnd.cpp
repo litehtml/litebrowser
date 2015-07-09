@@ -205,11 +205,11 @@ void CBrowserWnd::reload()
 	}
 }
 
-void CBrowserWnd::calc_time()
+void CBrowserWnd::calc_time(int calc_repeat)
 {
 	if(m_view)
 	{
-		m_view->render(TRUE);
+		m_view->render(TRUE, TRUE, calc_repeat);
 	}
 }
 

@@ -43,7 +43,7 @@ public:
 	bool				is_valid_page(bool with_lock = true);
 	web_page*			get_page(bool with_lock = true);
 
-	void				render(BOOL calc_time = FALSE, BOOL do_redraw = TRUE);
+	void				render(BOOL calc_time = FALSE, BOOL do_redraw = TRUE, int calc_repeat = 1);
 	void				get_client_rect(litehtml::position& client) const;
 	void				show_hash(std::wstring& hash);
 	void				update_history();

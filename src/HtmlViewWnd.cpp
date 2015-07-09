@@ -265,7 +265,7 @@ void CHTMLViewWnd::open( LPCWSTR url, bool reload )
 	}
 }
 
-void CHTMLViewWnd::render(BOOL calc_time, BOOL do_redraw)
+void CHTMLViewWnd::render(BOOL calc_time, BOOL do_redraw, int calc_repeat)
 {
 	if(!m_hWnd)
 	{
@@ -284,8 +284,12 @@ void CHTMLViewWnd::render(BOOL calc_time, BOOL do_redraw)
 
 		if(calc_time)
 		{
+			if (calc_repeat <= 0) calc_repeat = 1;
 			DWORD tic1 = GetTickCount();
-			page->m_doc->render(width);
+			for (int i = 0; i < calc_repeat; i++)
+			{
+				page->m_doc->render(width);
+			}
 			DWORD tic2 = GetTickCount();
 			WCHAR msg[255];
 			StringCchPrintf(msg, 255, L"Render time: %d msec", tic2 - tic1);

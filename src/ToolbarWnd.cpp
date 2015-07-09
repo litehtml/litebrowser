@@ -537,7 +537,9 @@ void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, litehtml::eleme
 
 		HMENU hMenu = CreatePopupMenu();
 
-		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING,	1, L"Calculate Render Time");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 1, L"Calculate Render Time");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 3, L"Calculate Render Time (10)");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 4, L"Calculate Render Time (100)");
 		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_SEPARATOR, 0, L"");
 		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING,	2, L"Exit");
 
@@ -551,6 +553,12 @@ void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, litehtml::eleme
 			break;
 		case 1:
 			m_parent->calc_time();
+			break;
+		case 3:
+			m_parent->calc_time(10);
+			break;
+		case 4:
+			m_parent->calc_time(100);
 			break;
 		}
 	}
