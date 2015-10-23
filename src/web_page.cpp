@@ -141,10 +141,6 @@ void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
 	}
 }
 
-void web_page::link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el)
-{
-}
-
 void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl )
 {
 	std::wstring css_url;
@@ -174,7 +170,7 @@ void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url
 	}
 }
 
-void web_page::on_anchor_click( const litehtml::tchar_t* url, litehtml::element::ptr el )
+void web_page::on_anchor_click( const litehtml::tchar_t* url, const litehtml::element::ptr& el )
 {
 	std::wstring anchor;
 	t_make_url(url, NULL, anchor);

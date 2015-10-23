@@ -3,7 +3,7 @@
 #include <Richedit.h>
 #include <strsafe.h>
 
-el_omnibox::el_omnibox(std::shared_ptr<litehtml::document>& doc, HWND parent, cairo_container* container) : litehtml::html_tag(doc), m_edit(parent, container)
+el_omnibox::el_omnibox(const std::shared_ptr<litehtml::document>& doc, HWND parent, cairo_container* container) : litehtml::html_tag(doc), m_edit(parent, container)
 {
 	m_hWndParent = parent;
 	m_haveFocus = FALSE;

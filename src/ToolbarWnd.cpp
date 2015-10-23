@@ -494,7 +494,7 @@ struct
 	{NULL,						NULL},
 };
 
-void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, litehtml::element::ptr el )
+void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, const litehtml::element::ptr& el )
 {
 	if(!str_cmp(url, _t("back")))
 	{
@@ -569,7 +569,7 @@ void CToolbarWnd::set_cursor( const litehtml::tchar_t* cursor )
 	m_cursor = cursor;
 }
 
-std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, std::shared_ptr<litehtml::document>& doc)
+std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc)
 {
 	if (!t_strcasecmp(tag_name, _t("input")))
 	{

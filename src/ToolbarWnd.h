@@ -43,9 +43,9 @@ public:
 	virtual	void	set_base_url(const litehtml::tchar_t* base_url);
 	virtual	void	link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el);
 	virtual void	import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
-	virtual	void	on_anchor_click(const litehtml::tchar_t* url, litehtml::element::ptr el);
+	virtual	void	on_anchor_click(const litehtml::tchar_t* url, const litehtml::element::ptr& el);
 	virtual	void	set_cursor(const litehtml::tchar_t* cursor);
-	virtual std::shared_ptr<litehtml::element> create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, std::shared_ptr<litehtml::document>& doc);
+	virtual std::shared_ptr<litehtml::element> create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc);
 
 protected:
 	virtual void	OnCreate();
