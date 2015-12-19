@@ -47,6 +47,7 @@ public:
 	void				get_client_rect(litehtml::position& client) const;
 	void				show_hash(std::wstring& hash);
 	void				update_history();
+	void				redraw_boxes(const litehtml::position::vector& boxes);
 
 protected:
 	virtual void		OnCreate();

@@ -191,6 +191,11 @@ void web_page::set_cursor( const litehtml::tchar_t* cursor )
 #endif
 }
 
+void web_page::redraw(const litehtml::position::vector& redraw_boxes)
+{
+	m_parent->redraw_boxes(redraw_boxes);
+}
+
 cairo_container::image_ptr web_page::get_image(LPCWSTR url, bool redraw_on_ready)
 {
 	cairo_container::image_ptr img;

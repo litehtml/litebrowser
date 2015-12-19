@@ -335,11 +335,6 @@ void CToolbarWnd::set_base_url( const litehtml::tchar_t* base_url )
 
 }
 
-void CToolbarWnd::link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el)
-{
-
-}
-
 int CToolbarWnd::set_width( int width )
 {
 	if(m_doc)
@@ -370,20 +365,7 @@ void CToolbarWnd::OnMouseMove(int x, int y)
 		}
 		if (!m_inCapture)
 		{
-			litehtml::position::vector redraw_boxes;
-			if (m_doc->on_mouse_over(x, y, x, y, redraw_boxes))
-			{
-				for (litehtml::position::vector::iterator box = redraw_boxes.begin(); box != redraw_boxes.end(); box++)
-				{
-					RECT rcRedraw;
-					rcRedraw.left = box->left();
-					rcRedraw.right = box->right();
-					rcRedraw.top = box->top();
-					rcRedraw.bottom = box->bottom();
-					InvalidateRect(m_hWnd, &rcRedraw, TRUE);
-				}
-				UpdateWindow(m_hWnd);
-			}
+			m_doc->on_mouse_over(x, y, x, y);
 		}
 	}
 	update_cursor();
@@ -393,20 +375,7 @@ void CToolbarWnd::OnMouseLeave()
 {
 	if(m_doc)
 	{
-		litehtml::position::vector redraw_boxes;
-		if(m_doc->on_mouse_leave(redraw_boxes))
-		{
-			for(litehtml::position::vector::iterator box = redraw_boxes.begin(); box != redraw_boxes.end(); box++)
-			{
-				RECT rcRedraw;
-				rcRedraw.left	= box->left();
-				rcRedraw.right	= box->right();
-				rcRedraw.top	= box->top();
-				rcRedraw.bottom	= box->bottom();
-				InvalidateRect(m_hWnd, &rcRedraw, TRUE);
-			}
-			UpdateWindow(m_hWnd);
-		}
+		m_doc->on_mouse_leave();
 	}
 }
 
@@ -427,20 +396,7 @@ void CToolbarWnd::OnLButtonDown(int x, int y)
 		}
 		if (process && !m_inCapture)
 		{
-			litehtml::position::vector redraw_boxes;
-			if (m_doc->on_lbutton_down(x, y, x, y, redraw_boxes))
-			{
-				for (litehtml::position::vector::iterator box = redraw_boxes.begin(); box != redraw_boxes.end(); box++)
-				{
-					RECT rcRedraw;
-					rcRedraw.left = box->left();
-					rcRedraw.right = box->right();
-					rcRedraw.top = box->top();
-					rcRedraw.bottom = box->bottom();
-					InvalidateRect(m_hWnd, &rcRedraw, TRUE);
-				}
-				UpdateWindow(m_hWnd);
-			}
+			m_doc->on_lbutton_down(x, y, x, y);
 		}
 	}
 }
@@ -457,19 +413,7 @@ void CToolbarWnd::OnLButtonUp( int x, int y )
 		if (process && !m_inCapture)
 		{
 			litehtml::position::vector redraw_boxes;
-			if (m_doc->on_lbutton_up(x, y, x, y, redraw_boxes))
-			{
-				for (litehtml::position::vector::iterator box = redraw_boxes.begin(); box != redraw_boxes.end(); box++)
-				{
-					RECT rcRedraw;
-					rcRedraw.left = box->left();
-					rcRedraw.right = box->right();
-					rcRedraw.top = box->top();
-					rcRedraw.bottom = box->bottom();
-					InvalidateRect(m_hWnd, &rcRedraw, TRUE);
-				}
-				UpdateWindow(m_hWnd);
-			}
+			m_doc->on_lbutton_up(x, y, x, y);
 		}
 	}
 }
@@ -589,6 +533,20 @@ std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::t
 		}
 	}
 	return 0;
+}
+
+void CToolbarWnd::redraw(const litehtml::position::vector& redraw_boxes)
+{
+	for (auto box : redraw_boxes)
+	{
+		RECT rcRedraw;
+		rcRedraw.left = box.left();
+		rcRedraw.right = box.right();
+		rcRedraw.top = box.top();
+		rcRedraw.bottom = box.bottom();
+		InvalidateRect(m_hWnd, &rcRedraw, TRUE);
+	}
+	UpdateWindow(m_hWnd);
 }
 
 void CToolbarWnd::import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl)

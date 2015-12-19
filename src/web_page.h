@@ -34,15 +34,16 @@ public:
 	void get_url(std::wstring& url);
 
 	// litehtml::document_container members
-	virtual	void		set_caption(const litehtml::tchar_t* caption);
-	virtual	void		set_base_url(const litehtml::tchar_t* base_url);
-	virtual void		import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
-	virtual	void		on_anchor_click(const litehtml::tchar_t* url, const litehtml::element::ptr& el);
-	virtual	void		set_cursor(const litehtml::tchar_t* cursor);
+	virtual	void		set_caption(const litehtml::tchar_t* caption) override;
+	virtual	void		set_base_url(const litehtml::tchar_t* base_url) override;
+	virtual void		import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl) override;
+	virtual	void		on_anchor_click(const litehtml::tchar_t* url, const litehtml::element::ptr& el) override;
+	virtual	void		set_cursor(const litehtml::tchar_t* cursor) override;
+	virtual void		redraw(const litehtml::position::vector& redraw_boxes) override;
 
-	virtual void		make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out);
-	virtual cairo_container::image_ptr	get_image(LPCWSTR url, bool redraw_on_ready);
-	virtual void		get_client_rect(litehtml::position& client)  const;
+	virtual void		make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out) override;
+	virtual cairo_container::image_ptr	get_image(LPCWSTR url, bool redraw_on_ready) override;
+	virtual void		get_client_rect(litehtml::position& client)  const  override;
 private:
 	LPWSTR	load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");
 	unsigned char*	load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");

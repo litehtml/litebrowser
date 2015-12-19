@@ -39,13 +39,13 @@ public:
 	virtual cairo_container::image_ptr get_image(LPCWSTR url, bool redraw_on_ready);
 
 	// litehtml::document_container members
-	virtual	void	set_caption(const litehtml::tchar_t* caption);
-	virtual	void	set_base_url(const litehtml::tchar_t* base_url);
-	virtual	void	link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el);
-	virtual void	import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
-	virtual	void	on_anchor_click(const litehtml::tchar_t* url, const litehtml::element::ptr& el);
-	virtual	void	set_cursor(const litehtml::tchar_t* cursor);
-	virtual std::shared_ptr<litehtml::element> create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc);
+	virtual	void	set_caption(const litehtml::tchar_t* caption) override;
+	virtual	void	set_base_url(const litehtml::tchar_t* base_url) override;
+	virtual void	import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl) override;
+	virtual	void	on_anchor_click(const litehtml::tchar_t* url, const litehtml::element::ptr& el) override;
+	virtual	void	set_cursor(const litehtml::tchar_t* cursor) override;
+	virtual std::shared_ptr<litehtml::element> create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc) override;
+	virtual void	redraw(const litehtml::position::vector& redraw_boxes) override;
 
 protected:
 	virtual void	OnCreate();
