@@ -173,6 +173,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <Profile>true</Profile>
+      <AdditionalDependencies>uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>litebrowser.exe.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -229,6 +230,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <Profile>true</Profile>
+      <AdditionalDependencies>uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>litebrowser.exe.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -283,6 +285,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <Profile>true</Profile>
+      <AdditionalDependencies>uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>litebrowser.exe.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -339,6 +342,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <Profile>true</Profile>
+      <AdditionalDependencies>uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>litebrowser.exe.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -440,7 +444,7 @@
     <None Include="html\toolbar.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libs\litehtml\src\litehtml.vcxproj">
+    <ProjectReference Include="..\libs\litehtml\litehtml.vcxproj">
       <Project>{5eee68e7-3cb0-4adb-af72-4c0bb01f0b18}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
