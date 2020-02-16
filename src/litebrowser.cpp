@@ -33,7 +33,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 			wnd.open(lpCmdLine);
 		} else
 		{
-			wnd.open(L"http://www.dmoz.org/");
+			wnd.open(L"http://www.litehtml.com/");
 		}
 
 		MSG msg;
