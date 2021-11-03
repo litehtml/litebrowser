@@ -198,7 +198,7 @@ BOOL tordex::http_request::create( LPCWSTR url, HINTERNET hSession )
 	}
 
 	m_hConnection = WinHttpConnect(hSession, host.c_str(), urlComp.nPort, 0);
-	
+
 	PCWSTR pwszAcceptTypes[] = {L"*/*", NULL};
 
 	path += extra;
@@ -213,6 +213,9 @@ BOOL tordex::http_request::create( LPCWSTR url, HINTERNET hSession )
 		unlock();
 		return FALSE;
 	}
+
+	DWORD options = WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS;
+	WinHttpSetOption(m_hRequest, WINHTTP_OPTION_REDIRECT_POLICY, &options, sizeof(options));
 
 	if(!WinHttpSendRequest(m_hRequest, NULL, 0, NULL, 0, 0, (DWORD_PTR) this))
 	{
