@@ -571,12 +571,12 @@ void CToolbarWnd::set_cursor( const litehtml::tchar_t* cursor )
 
 std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc)
 {
-	if (!t_strcasecmp(tag_name, _t("input")))
+	if (!litehtml::t_strcasecmp(tag_name, _t("input")))
 	{
 		auto iter = attributes.find(_t("type"));
 		if (iter != attributes.end())
 		{
-			if (!t_strcasecmp(iter->second.c_str(), _t("text")))
+			if (!litehtml::t_strcasecmp(iter->second.c_str(), _t("text")))
 			{
 				if (m_omnibox)
 				{
