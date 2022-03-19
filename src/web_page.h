@@ -47,7 +47,7 @@ public:
 	virtual void		get_client_rect(litehtml::position& client)  const;
 private:
 	LPWSTR	load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8", LPCWSTR forceEncoding = NULL);
-	unsigned char*	load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8", LPCWSTR forceEncoding = NULL);
+	char*	load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8", LPCWSTR forceEncoding = NULL);
 	BOOL	download_and_wait(LPCWSTR url);
 };
 

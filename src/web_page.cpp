@@ -157,7 +157,7 @@ void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url
 			delete css;
 		}
 #else
-		LPSTR css = (LPSTR) load_utf8_file(m_waited_file.c_str(), false, L"UTF-8");
+		LPSTR css = load_utf8_file(m_waited_file.c_str(), false, L"UTF-8");
 		if(css)
 		{
 			LPSTR css_urlA = cairo_font::wchar_to_utf8(css_url.c_str());
@@ -234,38 +234,24 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 		m_url = realUrl;
 	}
 
-#ifdef LITEHTML_UTF8
-	litehtml::byte* html_text = load_utf8_file(file, true, L"UTF-8", encoding);
+	char* html_text = load_utf8_file(file, true, L"UTF-8", encoding);
 
 	if(!html_text)
 	{
 		LPCSTR txt = "<h1>Something Wrong</h1>";
-		html_text = new litehtml::byte[lstrlenA(txt) + 1];
-		lstrcpyA((LPSTR) html_text, txt);
+		html_text = new char[lstrlenA(txt) + 1];
+		lstrcpyA(html_text, txt);
 	}
 
-	m_doc = litehtml::document::createFromUTF8((const char*) html_text, this, m_parent->get_html_context());
+	m_doc = litehtml::document::createFromUTF8(html_text, this, m_parent->get_html_context());
 	delete html_text;
-#else
-	LPWSTR html_text = load_text_file(file, true, L"UTF-8", encoding);
-
-	if(!html_text)
-	{
-		LPCWSTR txt = L"<h1>Something Wrong</h1>";
-		html_text = new WCHAR[lstrlen(txt) + 1];
-		lstrcpy(html_text, txt);
-	}
-
-	m_doc = litehtml::document::createFromString(html_text, this, m_parent->get_html_context());
-	delete html_text;
-#endif
 
 	PostMessage(m_parent->wnd(), WM_PAGE_LOADED, 0, 0);
 }
 
 LPWSTR web_page::load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
 {
-	char* utf8 = (char*) load_utf8_file(path, is_html, defEncoding, forceEncoding);
+	char* utf8 = load_utf8_file(path, is_html, defEncoding, forceEncoding);
 
 	if(utf8)
 	{
@@ -385,15 +371,15 @@ void web_page::get_url( std::wstring& url )
 	}
 }
 
-unsigned char* web_page::load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
+char* web_page::load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
 {
-	unsigned char* ret = NULL;
+	char* ret = NULL;
 
 	HANDLE fl = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if(fl != INVALID_HANDLE_VALUE)
 	{
 		DWORD size = GetFileSize(fl, NULL);
-		ret = new unsigned char[size + 1];
+		ret = new char[size + 1];
 
 		DWORD cbRead = 0;
 		if(size >= 3)
@@ -490,7 +476,7 @@ unsigned char* web_page::load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defE
 			{
 				dst[szDst] = 0;
 				delete ret;
-				ret = (unsigned char*) dst;
+				ret = dst;
 			} else
 			{
 				delete dst;
