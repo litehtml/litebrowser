@@ -223,7 +223,7 @@ void web_page::load( LPCWSTR url )
 		m_http.download_file( url, new web_file(this, web_file_document) );
 	} else
 	{
-		on_document_loaded(url, L"UTF-8", NULL);
+		on_document_loaded(url, NULL, NULL);
 	}
 }
 
@@ -235,7 +235,7 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 	}
 
 #ifdef LITEHTML_UTF8
-	litehtml::byte* html_text = load_utf8_file(file, true);
+	litehtml::byte* html_text = load_utf8_file(file, true, L"UTF-8", encoding);
 
 	if(!html_text)
 	{
@@ -247,7 +247,7 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 	m_doc = litehtml::document::createFromUTF8((const char*) html_text, this, m_parent->get_html_context());
 	delete html_text;
 #else
-	LPWSTR html_text = load_text_file(file, true, encoding);
+	LPWSTR html_text = load_text_file(file, true, L"UTF-8", encoding);
 
 	if(!html_text)
 	{
@@ -263,9 +263,9 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 	PostMessage(m_parent->wnd(), WM_PAGE_LOADED, 0, 0);
 }
 
-LPWSTR web_page::load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding )
+LPWSTR web_page::load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
 {
-	char* utf8 = (char*) load_utf8_file(path, is_html, defEncoding);
+	char* utf8 = (char*) load_utf8_file(path, is_html, defEncoding, forceEncoding);
 
 	if(utf8)
 	{
@@ -385,7 +385,7 @@ void web_page::get_url( std::wstring& url )
 	}
 }
 
-unsigned char* web_page::load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding )
+unsigned char* web_page::load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
 {
 	unsigned char* ret = NULL;
 
@@ -416,37 +416,44 @@ unsigned char* web_page::load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR def
 	if(is_html)
 	{
 		std::wstring encoding;
-		char* begin = StrStrIA((LPSTR) ret, "<meta");
-		while(begin && encoding.empty())
+		if (forceEncoding)
 		{
-			char* end = StrStrIA(begin, ">");
-			char* s1 = StrStrIA(begin, "Content-Type");
-			if(s1 && s1 < end)
+			encoding = forceEncoding;
+		}
+		else
+		{
+			char* begin = StrStrIA((LPSTR)ret, "<meta");
+			while (begin && encoding.empty())
 			{
-				s1 = StrStrIA(begin, "charset");
-				if(s1)
+				char* end = StrStrIA(begin, ">");
+				char* s1 = StrStrIA(begin, "Content-Type");
+				if (s1 && s1 < end)
 				{
-					s1 += strlen("charset");
-					while(!isalnum(s1[0]) && s1 < end)
+					s1 = StrStrIA(begin, "charset");
+					if (s1)
 					{
-						s1++;
-					}
-					while((isalnum(s1[0]) || s1[0] == '-') && s1 < end)
-					{
-						encoding += s1[0];
-						s1++;
+						s1 += strlen("charset");
+						while (!isalnum(s1[0]) && s1 < end)
+						{
+							s1++;
+						}
+						while ((isalnum(s1[0]) || s1[0] == '-') && s1 < end)
+						{
+							encoding += s1[0];
+							s1++;
+						}
 					}
 				}
+				if (encoding.empty())
+				{
+					begin = StrStrIA(begin + strlen("<meta"), "<meta");
+				}
 			}
-			if(encoding.empty())
-			{
-				begin = StrStrIA(begin + strlen("<meta"), "<meta");
-			}
-		}
 
-		if(encoding.empty() && defEncoding)
-		{
-			encoding = defEncoding;
+			if (encoding.empty() && defEncoding)
+			{
+				encoding = defEncoding;
+			}
 		}
 
 		if(!encoding.empty())
@@ -551,7 +558,7 @@ void web_file::OnFinish( DWORD dwError, LPCWSTR errMsg )
 		switch(m_type)
 		{
 		case web_file_document:
-			m_page->on_document_loaded(m_file, L"UTF-8", m_realUrl.empty() ? NULL : m_realUrl.c_str());
+			m_page->on_document_loaded(m_file, m_encoding.empty() ? NULL : m_encoding.c_str(), m_realUrl.empty() ? NULL : m_realUrl.c_str());
 			break;
 		case web_file_image_redraw:
 			m_page->on_image_loaded(m_file, m_url.c_str(), true);
@@ -582,5 +589,14 @@ void web_file::OnHeadersReady( HINTERNET hRequest )
 	if (WinHttpQueryOption(m_hRequest, WINHTTP_OPTION_URL, buf, &len))
 	{
 		m_realUrl = buf;
+	}
+	len = sizeof(buf);
+	if (WinHttpQueryHeaders(m_hRequest, WINHTTP_QUERY_CONTENT_TYPE, NULL, buf, &len, NULL))
+	{
+		WCHAR* pos = wcsstr(buf, L"charset=");
+		if (pos)
+		{
+			m_encoding = pos + wcslen(L"charset=");
+		}
 	}
 }
