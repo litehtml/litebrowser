@@ -8,8 +8,10 @@
 
 # Build results
 [Dd]ebug/
+Debug-UTF8/
 [Dd]ebugPublic/
 [Rr]elease/
+Release-UTF8/
 x64/
 build/
 bld/
@@ -139,6 +141,9 @@ csx/
 AppPackages/
 
 # Others
+.idea/
+.vs/
+.vscode/
 sql/
 *.Cache
 ClientBin/
