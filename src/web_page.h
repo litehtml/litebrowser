@@ -25,6 +25,8 @@ public:
 	virtual ~web_page();
 
 	void load(LPCWSTR url);
+	// encoding: as specified in Content-Type HTTP header
+	//   it is NULL for local files or if Content-Type header is not present or Content-Type header doesn't contain "charset="
 	void on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUrl);
 	void on_image_loaded(LPCWSTR file, LPCWSTR url, bool redraw_only);
 	void on_document_error(DWORD dwError, LPCWSTR errMsg);
@@ -44,8 +46,8 @@ public:
 	virtual cairo_container::image_ptr	get_image(LPCWSTR url, bool redraw_on_ready);
 	virtual void		get_client_rect(litehtml::position& client)  const;
 private:
-	LPWSTR	load_text_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");
-	unsigned char*	load_utf8_file( LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8");
+	LPWSTR	load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8", LPCWSTR forceEncoding = NULL);
+	char*	load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8", LPCWSTR forceEncoding = NULL);
 	BOOL	download_and_wait(LPCWSTR url);
 };
 
@@ -65,6 +67,7 @@ class web_file : public tordex::http_request
 	HANDLE			m_hFile;
 	LPVOID			m_data;
 	std::wstring	m_realUrl;
+	std::wstring	m_encoding;
 public:
 	web_file(web_page* page, web_file_type type, LPVOID data = NULL);
 	virtual ~web_file();
