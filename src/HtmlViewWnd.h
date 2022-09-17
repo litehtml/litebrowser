@@ -47,6 +47,7 @@ public:
 	void				get_client_rect(litehtml::position& client) const;
 	void				show_hash(std::wstring& hash);
 	void				update_history();
+	void				calc_draw(int calc_repeat = 1);
 
 protected:
 	virtual void		OnCreate();

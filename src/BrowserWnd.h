@@ -25,6 +25,7 @@ public:
 	void forward();
 	void reload();
 	void calc_time(int calc_repeat = 1);
+	void calc_redraw(int calc_repeat = 1);
 	void on_page_loaded(LPCWSTR url);
 
 protected:

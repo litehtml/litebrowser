@@ -38,6 +38,7 @@
     <ProjectGuid>{54AB6A6E-4B83-4B33-965F-DB8455C8C292}</ProjectGuid>
     <RootNamespace>litebrowser</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-UTF8|Win32'" Label="Configuration">

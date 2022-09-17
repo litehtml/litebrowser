@@ -207,9 +207,17 @@ void CBrowserWnd::reload()
 
 void CBrowserWnd::calc_time(int calc_repeat)
 {
-	if(m_view)
+	if (m_view)
 	{
 		m_view->render(TRUE, TRUE, calc_repeat);
+	}
+}
+
+void CBrowserWnd::calc_redraw(int calc_repeat)
+{
+	if (m_view)
+	{
+		m_view->calc_draw(calc_repeat);
 	}
 }
 

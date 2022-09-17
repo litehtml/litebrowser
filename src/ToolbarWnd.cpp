@@ -541,6 +541,10 @@ void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, const litehtml:
 		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 3, L"Calculate Render Time (10)");
 		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 4, L"Calculate Render Time (100)");
 		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_SEPARATOR, 0, L"");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 5, L"Calculate Draw Time");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 6, L"Calculate Draw Time (10)");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING, 7, L"Calculate Draw Time (100)");
+		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_SEPARATOR, 0, L"");
 		InsertMenu(hMenu, -1, MF_BYPOSITION | MF_STRING,	2, L"Exit");
 
 		int ret = TrackPopupMenu(hMenu, TPM_RIGHTALIGN | TPM_TOPALIGN | TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, 0, m_hWnd, NULL);
@@ -559,6 +563,15 @@ void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, const litehtml:
 			break;
 		case 4:
 			m_parent->calc_time(100);
+			break;
+		case 5:
+			m_parent->calc_redraw(1);
+			break;
+		case 6:
+			m_parent->calc_redraw(10);
+			break;
+		case 7:
+			m_parent->calc_redraw(100);
 			break;
 		}
 	}

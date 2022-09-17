@@ -30,9 +30,9 @@ void el_omnibox::set_url(LPCWSTR url)
 	m_edit.setText(url);
 }
 
-void el_omnibox::draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::position* clip)
+void el_omnibox::draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::position* clip, const std::shared_ptr<litehtml::render_item>& ri)
 {
-	litehtml::html_tag::draw(hdc, x, y, clip);
+	litehtml::html_tag::draw(hdc, x, y, clip, ri);
 
 	m_edit.draw((cairo_t*)hdc);
 }
@@ -41,7 +41,7 @@ void el_omnibox::parse_styles(bool is_reparse)
 {
 	litehtml::html_tag::parse_styles(is_reparse);
 
-	m_edit.setFont((cairo_font*)get_font(), get_color(_t("color"), true));
+	m_edit.setFont((cairo_font*)css().get_font(), get_color(_t("color"), true));
 }
 
 void el_omnibox::set_parent(HWND parent)

@@ -265,6 +265,22 @@ void CHTMLViewWnd::open( LPCWSTR url, bool reload )
 	}
 }
 
+void CHTMLViewWnd::calc_draw(int calc_repeat)
+{
+	DWORD tic1 = GetTickCount();
+	for (int i = 0; i < calc_repeat; i++)
+	{
+		RECT rcClient;
+		GetClientRect(m_hWnd, &rcClient);
+		//rcClient.bottom = rcClient.top + (rcClient.bottom - rcClient.top) / 10;
+		redraw(&rcClient, TRUE);
+	}
+	DWORD tic2 = GetTickCount();	
+	WCHAR msg[255];
+	StringCchPrintf(msg, 255, L"Draw time: %d msec", tic2 - tic1);
+	MessageBox(m_hWnd, msg, L"litebrowser", MB_ICONINFORMATION | MB_OK);
+}
+
 void CHTMLViewWnd::render(BOOL calc_time, BOOL do_redraw, int calc_repeat)
 {
 	if(!m_hWnd)
