@@ -4,12 +4,6 @@
 #include "BrowserWnd.h"
 #include "el_omnibox.h"
 
-#ifdef LITEHTML_UTF8
-	#define str_cmp	strcmp
-#else
-	#define str_cmp	lstrcmp
-#endif
-
 CToolbarWnd::CToolbarWnd( HINSTANCE hInst, CBrowserWnd* parent )
 {
 	m_inCapture = FALSE;
@@ -36,7 +30,7 @@ CToolbarWnd::CToolbarWnd( HINSTANCE hInst, CBrowserWnd* parent )
 		RegisterClass(&wc);
 	}
 
-	m_context.load_master_stylesheet(_t("html,div,body { display: block; } head,style { display: none; }"));
+	m_context.load_master_stylesheet("html,div,body { display: block; } head,style { display: none; }");
 }
 CToolbarWnd::~CToolbarWnd(void)
 {
@@ -209,11 +203,11 @@ void CToolbarWnd::update_cursor()
 {
 	LPCWSTR defArrow = IDC_ARROW;
 
-	if (m_cursor == _t("pointer"))
+	if (m_cursor == "pointer")
 	{
 		SetCursor(LoadCursor(NULL, IDC_HAND));
 	}
-	else if (m_cursor == _t("text"))
+	else if (m_cursor == "text")
 	{
 		SetCursor(LoadCursor(NULL, IDC_IBEAM));
 	}
@@ -264,25 +258,6 @@ void CToolbarWnd::OnDestroy()
 
 void CToolbarWnd::create( int x, int y, int width, HWND parent )
 {
-#ifndef LITEHTML_UTF8
-	LPWSTR html = NULL;
-
-	HRSRC hResource = ::FindResource(m_hInst, L"toolbar.html", RT_HTML);
-	if(hResource)
-	{
-		DWORD imageSize = ::SizeofResource(m_hInst, hResource);
-		if(imageSize)
-		{
-			LPCSTR pResourceData = (LPCSTR) ::LockResource(::LoadResource(m_hInst, hResource));
-			if(pResourceData)
-			{
-				html = new WCHAR[imageSize * 3];
-				int ret = MultiByteToWideChar(CP_UTF8, 0, pResourceData, imageSize, html, imageSize * 3);
-				html[ret] = 0;
-			}
-		}
-	}
-#else
 	LPSTR html = NULL;
 
 	HRSRC hResource = ::FindResource(m_hInst, L"toolbar.html", RT_HTML);
@@ -300,7 +275,6 @@ void CToolbarWnd::create( int x, int y, int width, HWND parent )
 			}
 		}
 	}
-#endif
 	m_hWnd = CreateWindow(TOOLBARWND_CLASS, L"toolbar", WS_CHILD | WS_VISIBLE, x, y, width, 1, parent, NULL, m_hInst, (LPVOID) this);
 
 	m_doc = litehtml::document::createFromString(html, this, &m_context);
@@ -325,12 +299,12 @@ cairo_container::image_ptr CToolbarWnd::get_image(LPCWSTR url, bool redraw_on_re
 	return img;
 }
 
-void CToolbarWnd::set_caption( const litehtml::tchar_t* caption )
+void CToolbarWnd::set_caption( const char* caption )
 {
 
 }
 
-void CToolbarWnd::set_base_url( const litehtml::tchar_t* base_url )
+void CToolbarWnd::set_base_url( const char* base_url )
 {
 
 }
@@ -494,18 +468,18 @@ struct
 	{NULL,						NULL},
 };
 
-void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, const litehtml::element::ptr& el )
+void CToolbarWnd::on_anchor_click( const char* url, const litehtml::element::ptr& el )
 {
-	if(!str_cmp(url, _t("back")))
+	if(!strcmp(url, "back"))
 	{
 		m_parent->back();
-	} else if(!str_cmp(url, _t("forward")))
+	} else if(!strcmp(url, "forward"))
 	{
 		m_parent->forward();
-	} else if(!str_cmp(url, _t("reload")))
+	} else if(!strcmp(url, "reload"))
 	{
 		m_parent->reload();
-	} else if(!str_cmp(url, _t("bookmarks")))
+	} else if(!strcmp(url, "bookmarks"))
 	{
 		litehtml::position pos = el->get_placement();
 		POINT pt;
@@ -527,7 +501,7 @@ void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, const litehtml:
 		{
 			m_parent->open(g_bookmarks[ret - 1].url);
 		}
-	} else if(!str_cmp(url, _t("settings")))
+	} else if(!strcmp(url, "settings"))
 	{
 		litehtml::position pos = el->get_placement();
 		POINT pt;
@@ -577,19 +551,19 @@ void CToolbarWnd::on_anchor_click( const litehtml::tchar_t* url, const litehtml:
 	}
 }
 
-void CToolbarWnd::set_cursor( const litehtml::tchar_t* cursor )
+void CToolbarWnd::set_cursor( const char* cursor )
 {
 	m_cursor = cursor;
 }
 
-std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc)
+std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const char* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc)
 {
-	if (!litehtml::t_strcasecmp(tag_name, _t("input")))
+	if (!litehtml::t_strcasecmp(tag_name, "input"))
 	{
-		auto iter = attributes.find(_t("type"));
+		auto iter = attributes.find("type");
 		if (iter != attributes.end())
 		{
-			if (!litehtml::t_strcasecmp(iter->second.c_str(), _t("text")))
+			if (!litehtml::t_strcasecmp(iter->second.c_str(), "text"))
 			{
 				if (m_omnibox)
 				{
@@ -604,7 +578,7 @@ std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const litehtml::t
 	return 0;
 }
 
-void CToolbarWnd::import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl)
+void CToolbarWnd::import_css(litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl)
 {
 
 }

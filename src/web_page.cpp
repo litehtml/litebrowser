@@ -15,36 +15,16 @@ web_page::~web_page()
 	m_http.stop();
 }
 
-void web_page::set_caption( const litehtml::tchar_t* caption )
+void web_page::set_caption( const char* caption )
 {
-#ifndef LITEHTML_UTF8
-	m_caption = caption;
-#else
 	LPWSTR captionW = cairo_font::utf8_to_wchar(caption);
 	m_caption = captionW;
 	delete captionW;
-#endif
 }
 
-void web_page::set_base_url( const litehtml::tchar_t* base_url )
+void web_page::set_base_url( const char* base_url )
 {
-#ifndef LITEHTML_UTF8
-	if(base_url)
-	{
-		if(PathIsRelative(base_url) && !PathIsURL(base_url))
-		{
-			make_url(base_url, m_url.c_str(), m_base_path);
-		} else
-		{
-			m_base_path = base_url;
-		}
-	} else
-	{
-		m_base_path = m_url;
-	}
-#else
 	LPWSTR bu = cairo_font::utf8_to_wchar(base_url);
-
 	if(bu)
 	{
 		if(PathIsRelative(bu) && !PathIsURL(bu))
@@ -54,11 +34,11 @@ void web_page::set_base_url( const litehtml::tchar_t* base_url )
 		{
 			m_base_path = bu;
 		}
+		delete bu;
 	} else
 	{
 		m_base_path = m_url;
 	}
-#endif
 }
 
 void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
@@ -141,23 +121,14 @@ void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
 	}
 }
 
-void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl )
+void web_page::import_css( litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl )
 {
 	std::wstring css_url;
-	t_make_url(url.c_str(), baseurl.c_str(), css_url);
+	make_url_utf8(url.c_str(), baseurl.c_str(), css_url);
 
 	if(download_and_wait(css_url.c_str()))
 	{
-#ifndef LITEHTML_UTF8
-		LPWSTR css = load_text_file(m_waited_file.c_str(), false, L"UTF-8");
-		if(css)
-		{
-			baseurl = css_url;
-			text = css;
-			delete css;
-		}
-#else
-		LPSTR css = load_utf8_file(m_waited_file.c_str(), false, L"UTF-8");
+		LPSTR css = load_text_file(m_waited_file.c_str(), false, L"UTF-8");
 		if(css)
 		{
 			LPSTR css_urlA = cairo_font::wchar_to_utf8(css_url.c_str());
@@ -166,29 +137,24 @@ void web_page::import_css( litehtml::tstring& text, const litehtml::tstring& url
 			delete css;
 			delete css_urlA;
 		}
-#endif
 	}
 }
 
-void web_page::on_anchor_click( const litehtml::tchar_t* url, const litehtml::element::ptr& el )
+void web_page::on_anchor_click( const char* url, const litehtml::element::ptr& el )
 {
 	std::wstring anchor;
-	t_make_url(url, NULL, anchor);
+	make_url_utf8(url, NULL, anchor);
 	m_parent->open(anchor.c_str());
 }
 
-void web_page::set_cursor( const litehtml::tchar_t* cursor )
+void web_page::set_cursor( const char* cursor )
 {
-#ifndef LITEHTML_UTF8
-	m_cursor = cursor;
-#else
 	LPWSTR v = cairo_font::utf8_to_wchar(cursor);
 	if(v)
 	{
 		m_cursor = v;
 		delete v;
 	}
-#endif
 }
 
 cairo_container::image_ptr web_page::get_image(LPCWSTR url, bool redraw_on_ready)
@@ -234,7 +200,7 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 		m_url = realUrl;
 	}
 
-	char* html_text = load_utf8_file(file, true, L"UTF-8", encoding);
+	char* html_text = load_text_file(file, true, L"UTF-8", encoding);
 
 	if(!html_text)
 	{
@@ -243,31 +209,14 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 		lstrcpyA(html_text, txt);
 	}
 
-	m_doc = litehtml::document::createFromUTF8(html_text, this, m_parent->get_html_context());
+	m_doc = litehtml::document::createFromString(html_text, this, m_parent->get_html_context());
 	delete html_text;
 
 	PostMessage(m_parent->wnd(), WM_PAGE_LOADED, 0, 0);
 }
 
-LPWSTR web_page::load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
-{
-	char* utf8 = load_utf8_file(path, is_html, defEncoding, forceEncoding);
-
-	if(utf8)
-	{
-		int sz = lstrlenA(utf8);
-		LPWSTR strW = new WCHAR[sz + 1];
-		MultiByteToWideChar(CP_UTF8, 0, utf8, -1, strW, sz + 1);
-		delete utf8;
-		return strW;
-	}
-
-	return NULL;
-}
-
 void web_page::on_document_error(DWORD dwError, LPCWSTR errMsg)
 {
-#ifdef LITEHTML_UTF8
 	std::string txt = "<h1>Something Wrong</h1>";
 	if(errMsg)
 	{
@@ -277,17 +226,7 @@ void web_page::on_document_error(DWORD dwError, LPCWSTR errMsg)
 		txt += "</p>";
 		delete errMsg_utf8;
 	}
-	m_doc = litehtml::document::createFromUTF8((const char*)txt.c_str(), this, m_parent->get_html_context());
-#else
-	std::wstring txt = L"<h1>Something Wrong</h1>";
-	if (errMsg)
-	{
-		txt += L"<p>";
-		txt += errMsg;
-		txt += L"</p>";
-	}
 	m_doc = litehtml::document::createFromString(txt.c_str(), this, m_parent->get_html_context());
-#endif
 
 	PostMessage(m_parent->wnd(), WM_PAGE_LOADED, 0, 0);
 }
@@ -371,7 +310,7 @@ void web_page::get_url( std::wstring& url )
 	}
 }
 
-char* web_page::load_utf8_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
+char* web_page::load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding, LPCWSTR forceEncoding)
 {
 	char* ret = NULL;
 

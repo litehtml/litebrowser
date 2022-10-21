@@ -15,7 +15,7 @@ class CToolbarWnd : public cairo_container
 	litehtml::document::ptr	m_doc;
 	CBrowserWnd*			m_parent;
 	std::shared_ptr<el_omnibox>	m_omnibox;
-	litehtml::tstring		m_cursor;
+	litehtml::string		m_cursor;
 	BOOL					m_inCapture;
 public:
 	CToolbarWnd(HINSTANCE hInst, CBrowserWnd* parent);
@@ -39,13 +39,13 @@ public:
 	virtual cairo_container::image_ptr get_image(LPCWSTR url, bool redraw_on_ready);
 
 	// litehtml::document_container members
-	virtual	void	set_caption(const litehtml::tchar_t* caption);
-	virtual	void	set_base_url(const litehtml::tchar_t* base_url);
+	virtual	void	set_caption(const char* caption);
+	virtual	void	set_base_url(const char* base_url);
 	virtual	void	link(std::shared_ptr<litehtml::document>& doc, litehtml::element::ptr el);
-	virtual void	import_css(litehtml::tstring& text, const litehtml::tstring& url, litehtml::tstring& baseurl);
-	virtual	void	on_anchor_click(const litehtml::tchar_t* url, const litehtml::element::ptr& el);
-	virtual	void	set_cursor(const litehtml::tchar_t* cursor);
-	virtual std::shared_ptr<litehtml::element> create_element(const litehtml::tchar_t* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc);
+	virtual void	import_css(litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl);
+	virtual	void	on_anchor_click(const char* url, const litehtml::element::ptr& el);
+	virtual	void	set_cursor(const char* cursor);
+	virtual std::shared_ptr<litehtml::element> create_element(const char* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc);
 
 protected:
 	virtual void	OnCreate();
