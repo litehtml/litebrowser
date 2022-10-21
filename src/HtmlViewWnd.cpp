@@ -835,21 +835,13 @@ void CHTMLViewWnd::show_hash(std::wstring& hash)
 	{
 		if(!hash.empty())
 		{
-			litehtml::tchar_t selector[255];
-#ifndef LITEHTML_UTF8
-			StringCchPrintf(selector, 255, L"#%s", hash.c_str());
-#else
+			char selector[255];
 			LPSTR hashA = cairo_font::wchar_to_utf8(hash.c_str());
 			StringCchPrintfA(selector, 255, "#%s", hashA);
-#endif
 			element::ptr el = page->m_doc->root()->select_one(selector);
 			if(!el)
 			{
-#ifndef LITEHTML_UTF8
-				StringCchPrintf(selector, 255, L"[name=%s]", hash.c_str());
-#else
 				StringCchPrintfA(selector, 255, "[name=%s]", hashA);
-#endif
 				el = page->m_doc->root()->select_one(selector);
 			}
 			if(el)
@@ -857,9 +849,7 @@ void CHTMLViewWnd::show_hash(std::wstring& hash)
 				litehtml::position pos = el->get_placement();
 				m_top = pos.y;
 			}
-#ifdef LITEHTML_UTF8
 			delete hashA;
-#endif
 		} else
 		{
 			m_top = 0;

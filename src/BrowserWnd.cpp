@@ -30,24 +30,6 @@ CBrowserWnd::CBrowserWnd(HINSTANCE hInst)
 		RegisterClass(&wc);
 	}
 
-#ifndef LITEHTML_UTF8
-	LPWSTR css = NULL;
-	HRSRC hResource = ::FindResource(m_hInst, L"master.css", L"CSS");
-	if(hResource)
-	{
-		DWORD imageSize = ::SizeofResource(m_hInst, hResource);
-		if(imageSize)
-		{
-			LPCSTR pResourceData = (LPCSTR) ::LockResource(::LoadResource(m_hInst, hResource));
-			if(pResourceData)
-			{
-				css = new WCHAR[imageSize * 3];
-				int ret = MultiByteToWideChar(CP_UTF8, 0, pResourceData, imageSize, css, imageSize * 3);
-				css[ret] = 0;
-			}
-		}
-	}
-#else
 	LPSTR css = NULL;
 	HRSRC hResource = ::FindResource(m_hInst, L"master.css", L"CSS");
 	if(hResource)
@@ -64,7 +46,7 @@ CBrowserWnd::CBrowserWnd(HINSTANCE hInst)
 			}
 		}
 	}
-#endif
+
 	if(css)
 	{
 		m_browser_context.load_master_stylesheet(css);

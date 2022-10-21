@@ -596,13 +596,9 @@ void CSingleLineEditCtrl::drawText(cairo_t* cr, LPCWSTR text, int cbText, LPRECT
 	pos.width = rcText->right - rcText->left;
 	pos.height = rcText->bottom - rcText->top;
 
-#ifndef LITEHTML_UTF8
-	m_container->draw_text((litehtml::uint_ptr) cr, str.c_str(), (litehtml::uint_ptr) m_hFont, textColor, pos);
-#else
 	LPSTR str_utf8 = cairo_font::wchar_to_utf8(str.c_str());
 	m_container->draw_text((litehtml::uint_ptr) cr, str_utf8, (litehtml::uint_ptr) m_hFont, textColor, pos);
 	delete str_utf8;
-#endif
 }
 
 void CSingleLineEditCtrl::getTextExtentPoint( LPCWSTR text, int cbText, LPSIZE sz )
@@ -616,13 +612,9 @@ void CSingleLineEditCtrl::getTextExtentPoint( LPCWSTR text, int cbText, LPSIZE s
 	{
 		str.append(text, cbText);
 	}
-#ifndef LITEHTML_UTF8
-	sz->cx = m_container->text_width(str.c_str(), (litehtml::uint_ptr) m_hFont);
-#else
 	LPSTR str_utf8 = cairo_font::wchar_to_utf8(str.c_str());
 	sz->cx = m_container->text_width(str_utf8, (litehtml::uint_ptr) m_hFont);
 	delete str_utf8;
-#endif
 	sz->cy = m_hFont->metrics().height;
 }
 

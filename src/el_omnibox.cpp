@@ -41,7 +41,7 @@ void el_omnibox::parse_styles(bool is_reparse)
 {
 	litehtml::html_tag::parse_styles(is_reparse);
 
-	m_edit.setFont((cairo_font*)css().get_font(), get_color(_t("color"), true));
+	m_edit.setFont((cairo_font*)css().get_font(), get_color("color", true));
 }
 
 void el_omnibox::set_parent(HWND parent)
