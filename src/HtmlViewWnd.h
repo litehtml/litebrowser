@@ -18,7 +18,6 @@ class CHTMLViewWnd
 	int							m_left;
 	int							m_max_top;
 	int							m_max_left;
-	litehtml::context*			m_context;
 	web_history					m_history;
 	web_page*					m_page;
 	web_page*					m_page_next;
@@ -26,7 +25,7 @@ class CHTMLViewWnd
 	simpledib::dib				m_dib;
 	CBrowserWnd*				m_parent;
 public:
-	CHTMLViewWnd(HINSTANCE	hInst, litehtml::context* ctx, CBrowserWnd* parent);
+	CHTMLViewWnd(HINSTANCE	hInst, CBrowserWnd* parent);
 	virtual ~CHTMLViewWnd(void);
 
 	void				create(int x, int y, int width, int height, HWND parent);
@@ -36,7 +35,6 @@ public:
 	void				back();
 	void				forward();
 
-	litehtml::context*	get_html_context();
 	void				set_caption();
 	void				lock();
 	void				unlock();
@@ -74,11 +72,6 @@ protected:
 private:
 	static LRESULT	CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam);
 };
-
-inline litehtml::context* CHTMLViewWnd::get_html_context()
-{
-	return m_context;
-}
 
 inline void CHTMLViewWnd::lock()
 {

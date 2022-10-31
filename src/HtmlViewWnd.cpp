@@ -5,7 +5,7 @@
 #include <strsafe.h>
 #include "BrowserWnd.h"
 
-CHTMLViewWnd::CHTMLViewWnd(HINSTANCE hInst, litehtml::context* ctx, CBrowserWnd* parent)
+CHTMLViewWnd::CHTMLViewWnd(HINSTANCE hInst, CBrowserWnd* parent)
 {
 	m_parent		= parent;
 	m_hInst			= hInst;
@@ -14,7 +14,6 @@ CHTMLViewWnd::CHTMLViewWnd(HINSTANCE hInst, litehtml::context* ctx, CBrowserWnd*
 	m_left			= 0;
 	m_max_top		= 0;
 	m_max_left		= 0;
-	m_context		= ctx;
 	m_page			= NULL;
 	m_page_next		= NULL;
 
