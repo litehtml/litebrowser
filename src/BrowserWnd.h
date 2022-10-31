@@ -13,7 +13,6 @@ class CBrowserWnd
 #ifndef NO_TOOLBAR
 	CToolbarWnd*		m_toolbar;
 #endif
-	litehtml::context	m_browser_context;
 public:
 	CBrowserWnd(HINSTANCE hInst);
 	virtual ~CBrowserWnd(void);

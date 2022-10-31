@@ -11,7 +11,6 @@ class CToolbarWnd : public cairo_container
 {
 	HWND					m_hWnd;
 	HINSTANCE				m_hInst;
-	litehtml::context		m_context;
 	litehtml::document::ptr	m_doc;
 	CBrowserWnd*			m_parent;
 	std::shared_ptr<el_omnibox>	m_omnibox;
