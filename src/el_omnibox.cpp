@@ -37,11 +37,11 @@ void el_omnibox::draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::posi
 	m_edit.draw((cairo_t*)hdc);
 }
 
-void el_omnibox::parse_styles(bool is_reparse)
+void el_omnibox::compute_styles(bool recursive)
 {
-	litehtml::html_tag::parse_styles(is_reparse);
+	litehtml::html_tag::compute_styles(recursive);
 
-	m_edit.setFont((cairo_font*)css().get_font(), get_color(litehtml::_color_, true));
+	m_edit.setFont((cairo_font*)css().get_font(), css().get_color());
 }
 
 void el_omnibox::set_parent(HWND parent)

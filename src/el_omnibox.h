@@ -12,9 +12,9 @@ public:
 	el_omnibox(const std::shared_ptr<litehtml::document>& doc, HWND parent, cairo_container* container);
 	~el_omnibox();
 
-	virtual void draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::position* clip, const std::shared_ptr<litehtml::render_item>& ri) override;
-	virtual void parse_styles(bool is_reparse);
-	virtual void on_click();
+	void draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::position* clip, const std::shared_ptr<litehtml::render_item>& ri) override;
+	void compute_styles(bool recursive) override;
+	void on_click() override;
 
 	BOOL have_focus()
 	{
