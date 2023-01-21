@@ -4,7 +4,7 @@
 
 ### Building
 
-You can build litebrowser with Vinsual Studio 2008 and newer. **Note**: this project contais some git submodules:
+You can build litebrowser with Visual Studio 2008 and newer. **Note**: this project contains some git submodules:
 
   * [freeimage](https://github.com/tordex/freeimage) - used to draw images
   * [cairo](https://github.com/tordex/cairo) - 2D graphics library

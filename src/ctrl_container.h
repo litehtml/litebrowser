@@ -1,6 +1,6 @@
 #pragma once
 
-class cotrols_container
+class controls_container
 {
 public:
 	virtual HWND get_hwnd() = 0;
