@@ -4,6 +4,7 @@
 #include <winhttp.h>
 #include <stdlib.h>
 #include <vector>
+#include <string>
 
 namespace tordex
 {
