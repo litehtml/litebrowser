@@ -27,4 +27,4 @@ Currently the address bar of the litebrowser is *fake*. Run litebrowser with com
 litebrowser.exe http://www.litehtml.com
 ```
 
-If you run litebrowser without parameter, the dmoz.org will be opened.
+If you run litebrowser without parameter, the dmoz-odp.org will be opened.
