@@ -25,8 +25,8 @@ set(LB_LIBS_INCLUDE_DIRS ${cairo_SOURCE_DIR}/src)
 set(LB_LIBS_LIBRARIES cairo)
 
 # module: add txdib simpledib
-FetchContent_Declare(txdib GIT_REPOSITORY https://github.com/torde/txdib)
-FetchContent_Declare(simpledib GIT_REPOSITORY https://github.com/torde/simpledib)
+FetchContent_Declare(txdib GIT_REPOSITORY https://github.com/tordex/txdib)
+FetchContent_Declare(simpledib GIT_REPOSITORY https://github.com/tordex/simpledib)
 FetchContent_MakeAvailable(txdib simpledib)
 set(LB_LIBS_INCLUDE_DIRS ${LB_LIBS_INCLUDE_DIRS} ${txdib_SOURCE_DIR} ${simpledib_SOURCE_DIR})
 set(LB_LIBS_LIBRARIES ${LB_LIBS_LIBRARIES} txdib simpledib)
