@@ -90,7 +90,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../libs/litehtml/include;../libs/litehtml/src;../libs/cairo/src;../libs/txdib;../libs/simpledib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NO_TOOLBAR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NO_TOOLBAR;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -118,7 +118,7 @@
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../libs/litehtml/include;../libs/litehtml/src;../libs/cairo/src;../libs/txdib;../libs/simpledib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NO_TOOLBAR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NO_TOOLBAR;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -143,7 +143,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>../libs/litehtml/include;../libs/litehtml/src;../libs/cairo/src;../libs/txdib;../libs/simpledib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -176,7 +176,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>../libs/litehtml/include;../libs/litehtml/src;../libs/cairo/src;../libs/txdib;../libs/simpledib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -199,8 +199,8 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_container.cpp" />
-    <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_font.cpp" />
+    <ClCompile Include="..\libs\litehtml\containers\windows\cairo\cairo_container.cpp" />
+    <ClCompile Include="..\libs\litehtml\containers\windows\cairo\cairo_font.cpp" />
     <ClCompile Include="BrowserWnd.cpp" />
     <ClCompile Include="el_omnibox.cpp" />
     <ClCompile Include="HtmlViewWnd.cpp" />
@@ -213,8 +213,8 @@
     <ClCompile Include="web_page.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_container.h" />
-    <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_font.h" />
+    <ClInclude Include="..\libs\litehtml\containers\windows\cairo\cairo_container.h" />
+    <ClInclude Include="..\libs\litehtml\containers\windows\cairo\cairo_font.h" />
     <ClInclude Include="BrowserWnd.h" />
     <ClInclude Include="ctrl_container.h" />
     <ClInclude Include="el_omnibox.h" />

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../containers/cairo/cairo_container.h"
-#include "../containers/cairo/cairo_font.h"
+#include "../containers/windows/cairo/cairo_container.h"
+#include "../containers/windows/cairo/cairo_font.h"
 #include "tordexhttp.h"
 
 class CHTMLViewWnd;

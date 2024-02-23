@@ -46,8 +46,8 @@ BOOL CSingleLineEditCtrl::OnKeyDown( WPARAM wParam, LPARAM lParam )
 				std::wstring strCopy;
 				if(m_selStart >= 0)
 				{
-					int start = min(m_selStart, m_selEnd);
-					int end   = max(m_selStart, m_selEnd);
+					int start = std::min(m_selStart, m_selEnd);
+					int end   = std::max(m_selStart, m_selEnd);
 					strCopy = m_text.substr(start, end - start);
 				} else
 				{
@@ -72,8 +72,8 @@ BOOL CSingleLineEditCtrl::OnKeyDown( WPARAM wParam, LPARAM lParam )
 				std::wstring strCopy;
 				if(m_selStart >= 0)
 				{
-					int start = min(m_selStart, m_selEnd);
-					int end   = max(m_selStart, m_selEnd);
+					int start = std::min(m_selStart, m_selEnd);
+					int end   = std::max(m_selStart, m_selEnd);
 					strCopy = m_text.substr(start, end - start);
 					delSelection();
 				} else
@@ -321,8 +321,8 @@ void CSingleLineEditCtrl::setRect(LPRECT rcText)
 
 void CSingleLineEditCtrl::draw(cairo_t* cr)
 {
-	int selStart	= min(m_selStart, m_selEnd);
-	int selEnd		= max(m_selStart, m_selEnd);
+	int selStart	= std::min(m_selStart, m_selEnd);
+	int selEnd		= std::max(m_selStart, m_selEnd);
 
 	RECT rcText = m_rcText;
 
@@ -445,8 +445,8 @@ void CSingleLineEditCtrl::UpdateControl()
 void CSingleLineEditCtrl::delSelection()
 {
 	if(m_selStart < 0) return;
-	int start	= min(m_selStart, m_selEnd);
-	int end		= max(m_selStart, m_selEnd);
+	int start	= std::min(m_selStart, m_selEnd);
+	int end		= std::max(m_selStart, m_selEnd);
 
 	m_text.erase(start, end - start);
 
