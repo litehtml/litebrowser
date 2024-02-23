@@ -18,12 +18,6 @@
     <ClCompile Include="BrowserWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_font.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HtmlViewWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,15 +45,15 @@
     <ClCompile Include="sl_edit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\litehtml\containers\windows\cairo\cairo_container.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\litehtml\containers\windows\cairo\cairo_font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrowserWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_container.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="globals.h">
@@ -99,6 +93,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ctrl_container.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\litehtml\containers\windows\cairo\cairo_container.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\litehtml\containers\windows\cairo\cairo_font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

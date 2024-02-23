@@ -1,7 +1,7 @@
 #pragma once
 #include "TxThread.h"
-#include "../containers/cairo/cairo_container.h"
-#include "../containers/cairo/cairo_font.h"
+#include "../containers/windows/cairo/cairo_container.h"
+#include "../containers/windows/cairo/cairo_font.h"
 
 
 #define WM_UPDATE_CONTROL	(WM_USER + 2001)
