@@ -4,7 +4,7 @@
 
 ### Building
 
-You can build litebrowser with Visual Studio 2008 and newer. **Note**: this project contains some git submodules:
+You can build litebrowser with Visual Studio 2022 and newer. **Note**: this project contains some git submodules:
 
   * [freeimage](https://github.com/tordex/freeimage) - used to draw images
   * [cairo](https://github.com/tordex/cairo) - 2D graphics library
@@ -16,15 +16,10 @@ Please be sure the submodules are fetched, or download them from github and copy
 
 ### Download binaries
 
-You can download the binary files from [litehtml.com](http://www.litehtml.com).
+You can download the binary files from the [Releases](https://github.com/litehtml/litebrowser/releases) page.
 
 ### Using litebrowser
 
 Before running litebrowser copy the files cairo.dll (from libs\cairo) and freeimage.dll (libs\freeimage) into the same folder where litebrowser.exe is.
 
-Currently the address bar of the litebrowser is *fake*. Run litebrowser with command line parameter:
-```
-litebrowser.exe http://www.litehtml.com
-```
-
-If you run litebrowser without parameter, the dmoz.org will be opened.
+Type url in the address bar and press [ENTER]
