@@ -45,10 +45,19 @@
     <ClCompile Include="sl_edit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\litehtml\containers\windows\cairo\cairo_container.cpp">
+    <ClCompile Include="..\libs\litehtml\containers\windows\cairo\windows_container.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libs\litehtml\containers\windows\cairo\cairo_font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\litehtml\containers\cairo\cairo_borders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\litehtml\containers\cairo\container_cairo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,10 +104,19 @@
     <ClInclude Include="ctrl_container.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libs\litehtml\containers\windows\cairo\cairo_container.h">
+    <ClInclude Include="..\libs\litehtml\containers\windows\cairo\windows_container.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\litehtml\containers\windows\cairo\cairo_font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_borders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\litehtml\containers\cairo\container_cairo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\litehtml\containers\cairo\cairo_images_cache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

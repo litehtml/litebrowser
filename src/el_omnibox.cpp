@@ -3,7 +3,7 @@
 #include <Richedit.h>
 #include <strsafe.h>
 
-el_omnibox::el_omnibox(const std::shared_ptr<litehtml::document>& doc, HWND parent, cairo_container* container) : litehtml::html_tag(doc), m_edit(parent, container)
+el_omnibox::el_omnibox(const std::shared_ptr<litehtml::document>& doc, HWND parent, windows_container* container) : litehtml::html_tag(doc), m_edit(parent, container)
 {
 	m_hWndParent = parent;
 	m_haveFocus = FALSE;
@@ -78,23 +78,26 @@ std::wstring el_omnibox::get_url()
 
 	if (!PathIsURL(str.c_str()))
 	{
-		DWORD sz = (DWORD) str.length() + 32;
-		LPWSTR outUrl = new WCHAR[sz];
-		HRESULT res = UrlApplyScheme(str.c_str(), outUrl, &sz, URL_APPLY_DEFAULT);
-		if (res == E_POINTER)
+		if (!PathFileExists(str.c_str()))
 		{
-			delete outUrl;
+			DWORD sz = (DWORD)str.length() + 32;
 			LPWSTR outUrl = new WCHAR[sz];
-			if (UrlApplyScheme(str.c_str(), outUrl, &sz, URL_APPLY_DEFAULT) == S_OK)
+			HRESULT res = UrlApplyScheme(str.c_str(), outUrl, &sz, URL_APPLY_DEFAULT);
+			if (res == E_POINTER)
+			{
+				delete outUrl;
+				LPWSTR outUrl = new WCHAR[sz];
+				if (UrlApplyScheme(str.c_str(), outUrl, &sz, URL_APPLY_DEFAULT) == S_OK)
+				{
+					str = outUrl;
+				}
+			}
+			else if (res == S_OK)
 			{
 				str = outUrl;
 			}
+			delete outUrl;
 		}
-		else if (res == S_OK)
-		{
-			str = outUrl;
-		}
-		delete outUrl;
 	}
 
 	return str;

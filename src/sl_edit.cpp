@@ -2,7 +2,7 @@
 #include "sl_edit.h"
 #include "ctrl_container.h"
 
-CSingleLineEditCtrl::CSingleLineEditCtrl(HWND parent, cairo_container* container) : m_textColor(0, 0, 0)
+CSingleLineEditCtrl::CSingleLineEditCtrl(HWND parent, windows_container* container) : m_textColor(0, 0, 0)
 {
 	m_parent			= parent;
 	m_container			= container;
@@ -596,9 +596,8 @@ void CSingleLineEditCtrl::drawText(cairo_t* cr, LPCWSTR text, int cbText, LPRECT
 	pos.width = rcText->right - rcText->left;
 	pos.height = rcText->bottom - rcText->top;
 
-	LPSTR str_utf8 = cairo_font::wchar_to_utf8(str.c_str());
-	m_container->draw_text((litehtml::uint_ptr) cr, str_utf8, (litehtml::uint_ptr) m_hFont, textColor, pos);
-	delete str_utf8;
+	auto str_utf8 = cairo_font::wchar_to_utf8(str.c_str());
+	m_container->draw_text((litehtml::uint_ptr) cr, str_utf8.c_str(), (litehtml::uint_ptr)m_hFont, textColor, pos);
 }
 
 void CSingleLineEditCtrl::getTextExtentPoint( LPCWSTR text, int cbText, LPSIZE sz )
@@ -612,9 +611,8 @@ void CSingleLineEditCtrl::getTextExtentPoint( LPCWSTR text, int cbText, LPSIZE s
 	{
 		str.append(text, cbText);
 	}
-	LPSTR str_utf8 = cairo_font::wchar_to_utf8(str.c_str());
-	sz->cx = m_container->text_width(str_utf8, (litehtml::uint_ptr) m_hFont);
-	delete str_utf8;
+	auto str_utf8 = cairo_font::wchar_to_utf8(str);
+	sz->cx = m_container->text_width(str_utf8.c_str(), (litehtml::uint_ptr)m_hFont);
 	sz->cy = m_hFont->metrics().height;
 }
 

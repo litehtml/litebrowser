@@ -1,6 +1,6 @@
 #pragma once
 #include "TxThread.h"
-#include "../containers/windows/cairo/cairo_container.h"
+#include "../containers/windows/cairo/windows_container.h"
 #include "../containers/windows/cairo/cairo_font.h"
 
 
@@ -11,7 +11,7 @@
 class CSingleLineEditCtrl : public CTxThread
 {
 private:
-	cairo_container*	m_container;
+	windows_container*	m_container;
 	HWND				m_parent;
 	std::wstring		m_text;
 	cairo_font*			m_hFont;
@@ -31,7 +31,7 @@ private:
 	RECT				m_rcText;
 
 public:
-	CSingleLineEditCtrl(HWND parent, cairo_container* container);
+	CSingleLineEditCtrl(HWND parent, windows_container* container);
 	virtual ~CSingleLineEditCtrl(void);
 
 	BOOL	OnKeyDown(WPARAM wParam, LPARAM lParam);

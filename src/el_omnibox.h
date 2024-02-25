@@ -9,7 +9,7 @@ class el_omnibox : public litehtml::html_tag
 	HWND m_hWndParent;
 	BOOL m_haveFocus;
 public:
-	el_omnibox(const std::shared_ptr<litehtml::document>& doc, HWND parent, cairo_container* container);
+	el_omnibox(const std::shared_ptr<litehtml::document>& doc, HWND parent, windows_container* container);
 	~el_omnibox();
 
 	void draw(litehtml::uint_ptr hdc, int x, int y, const litehtml::position* clip, const std::shared_ptr<litehtml::render_item>& ri) override;
