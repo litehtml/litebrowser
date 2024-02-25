@@ -70,21 +70,23 @@ void web_page::load_image(const char* src, const char* baseurl, bool redraw_on_r
 {
 	std::string url;
 	make_url(src, baseurl, url);
-	m_images.reserve(url);
-	if (PathIsURL(cairo_font::utf8_to_wchar(url).c_str()))
+	if (m_images.reserve(url))
 	{
-		if (redraw_on_ready)
+		if (PathIsURL(cairo_font::utf8_to_wchar(url).c_str()))
 		{
-			m_http.download_file(cairo_font::utf8_to_wchar(url).c_str(), new web_file(this, web_file_image_redraw));
+			if (redraw_on_ready)
+			{
+				m_http.download_file(cairo_font::utf8_to_wchar(url).c_str(), new web_file(this, web_file_image_redraw));
+			}
+			else
+			{
+				m_http.download_file(cairo_font::utf8_to_wchar(url).c_str(), new web_file(this, web_file_image_rerender));
+			}
 		}
 		else
 		{
-			m_http.download_file(cairo_font::utf8_to_wchar(url).c_str(), new web_file(this, web_file_image_rerender));
+			on_image_loaded(cairo_font::utf8_to_wchar(url).c_str(), cairo_font::utf8_to_wchar(url).c_str(), redraw_on_ready);
 		}
-	}
-	else
-	{
-		on_image_loaded(cairo_font::utf8_to_wchar(url).c_str(), cairo_font::utf8_to_wchar(url).c_str(), redraw_on_ready);
 	}
 }
 
