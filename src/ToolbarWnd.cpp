@@ -281,20 +281,15 @@ void CToolbarWnd::create( int x, int y, int width, HWND parent )
 	MoveWindow(m_hWnd, x, y, width, m_doc->height(), TRUE);
 }
 
-void CToolbarWnd::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
+cairo_surface_t* CToolbarWnd::get_image(const std::string& url)
 {
-	out = url;
-}
-
-cairo_container::image_ptr CToolbarWnd::get_image(LPCWSTR url, bool redraw_on_ready)
-{
-	cairo_container::image_ptr img = cairo_container::image_ptr(new CTxDIB);
-	if(!img->load(FindResource(m_hInst, url, RT_HTML), m_hInst))
+	CTxDIB img;
+	if (img.load(FindResource(m_hInst, cairo_font::utf8_to_wchar(url).c_str(), RT_HTML), m_hInst))
 	{
-		img = nullptr;
+		return dib_to_surface(img);
 	}
 
-	return img;
+	return nullptr;
 }
 
 void CToolbarWnd::set_caption( const char* caption )
@@ -452,16 +447,13 @@ struct
 	LPCWSTR	url;
 } g_bookmarks[] = 
 {
-	{L"DMOZ",					L"http://www.dmoz.org/"},
-	{L"litehtml project",		L"https://github.com/litehtml/litehtml"},
+	{L"Wiki: Alexei Navalny",	L"https://en.wikipedia.org/wiki/Alexei_Navalny?useskin=vector"},
 	{L"litehtml website",		L"http://www.litehtml.com/"},
 	{L"True Launch Bar",		L"http://www.truelaunchbar.com/"},
 	{L"Tordex",					L"http://www.tordex.com/"},
-	{L"True Paste",				L"http://www.truepaste.com/"},
-	{L"Text Accelerator",		L"http://www.textaccelerator.com/"},
-	{L"Wiki: Web Browser",		L"http://en.wikipedia.org/wiki/Web_browser"},
-	{L"Wiki: Obama",			L"http://en.wikipedia.org/wiki/Obama"},
-	{L"Code Project",			L"http://www.codeproject.com/"},
+	{L"Wiki: Web Browser",		L"http://en.wikipedia.org/wiki/Web_browser?useskin=vector"},
+	{L"Wiki: Obama",			L"http://en.wikipedia.org/wiki/Obama?useskin=vector"},
+	{L"std::vector",			L"https://en.cppreference.com/w/cpp/container/vector"},
 
 	{NULL,						NULL},
 };
@@ -574,6 +566,10 @@ std::shared_ptr<litehtml::element> CToolbarWnd::create_element(const char* tag_n
 		}
 	}
 	return 0;
+}
+
+void CToolbarWnd::load_image(const char* src, const char* baseurl, bool redraw_on_ready)
+{
 }
 
 void CToolbarWnd::import_css(litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl)

@@ -233,7 +233,7 @@ void CHTMLViewWnd::open( LPCWSTR url, bool reload )
 
 	if(m_page)
 	{
-		if(m_page->m_url == s_url && !reload)
+		if (cairo_font::utf8_to_wchar(m_page->m_url) == s_url && !reload)
 		{
 			open_hash_only = true;
 		} else
@@ -566,7 +566,7 @@ void CHTMLViewWnd::refresh()
 
 	if(page)
 	{
-		open(page->m_url.c_str(), true);
+		open(cairo_font::utf8_to_wchar(page->m_url.c_str()).c_str(), true);
 
 		page->release();
 	}
@@ -808,7 +808,7 @@ void CHTMLViewWnd::OnPageReady()
 		m_page_next = NULL;
 		is_ok = true;
 		hash = m_page->m_hash;
-		url = m_page->m_url;
+		url = cairo_font::utf8_to_wchar(m_page->m_url);
 	}
 
 	unlock();
@@ -835,12 +835,12 @@ void CHTMLViewWnd::show_hash(std::wstring& hash)
 		if(!hash.empty())
 		{
 			char selector[255];
-			LPSTR hashA = cairo_font::wchar_to_utf8(hash.c_str());
-			StringCchPrintfA(selector, 255, "#%s", hashA);
+			auto hashA = cairo_font::wchar_to_utf8(hash);
+			StringCchPrintfA(selector, 255, "#%s", hashA.c_str());
 			element::ptr el = page->m_doc->root()->select_one(selector);
 			if(!el)
 			{
-				StringCchPrintfA(selector, 255, "[name=%s]", hashA);
+				StringCchPrintfA(selector, 255, "[name=%s]", hashA.c_str());
 				el = page->m_doc->root()->select_one(selector);
 			}
 			if(el)
@@ -848,7 +848,6 @@ void CHTMLViewWnd::show_hash(std::wstring& hash)
 				litehtml::position pos = el->get_placement();
 				m_top = pos.y;
 			}
-			delete hashA;
 		} else
 		{
 			m_top = 0;

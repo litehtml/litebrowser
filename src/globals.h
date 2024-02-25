@@ -32,3 +32,5 @@
 
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "Msimg32.lib")
+
+extern cairo_surface_t* dib_to_surface(CTxDIB& img);

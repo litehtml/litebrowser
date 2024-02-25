@@ -17,172 +17,146 @@ web_page::~web_page()
 
 void web_page::set_caption( const char* caption )
 {
-	LPWSTR captionW = cairo_font::utf8_to_wchar(caption);
-	m_caption = captionW;
-	delete captionW;
+	m_caption = cairo_font::utf8_to_wchar(caption);
 }
 
 void web_page::set_base_url( const char* base_url )
 {
-	LPWSTR bu = cairo_font::utf8_to_wchar(base_url);
-	if(bu)
+	if(base_url)
 	{
-		if(PathIsRelative(bu) && !PathIsURL(bu))
+		auto bu = cairo_font::utf8_to_wchar(base_url);
+		if(PathIsRelative(bu.c_str()) && !PathIsURL(bu.c_str()))
 		{
-			make_url(bu, m_url.c_str(), m_base_path);
+			make_url(base_url, m_url.c_str(), m_base_path);
 		} else
 		{
-			m_base_path = bu;
+			m_base_path = base_url;
 		}
-		delete bu;
 	} else
 	{
 		m_base_path = m_url;
 	}
 }
 
-void web_page::make_url( LPCWSTR url, LPCWSTR basepath, std::wstring& out )
-{
-	if(PathIsRelative(url) && !PathIsURL(url))
-	{
-		if(basepath && basepath[0])
-		{
-			DWORD dl = lstrlen(url) + lstrlen(basepath) + 1;
-			LPWSTR abs_url = new WCHAR[dl];
-			HRESULT res = UrlCombine(basepath, url, abs_url, &dl, 0);
-			if (res == E_POINTER)
-			{
-				delete abs_url;
-				abs_url = new WCHAR[dl + 1];
-				if (UrlCombine(basepath, url, abs_url, &dl, 0) == S_OK)
-				{
-					out = abs_url;
-				}
-			}
-			else if (res == S_OK)
-			{
-				out = abs_url;
-			}
-			delete abs_url;
-		}
-		else
-		{
-			DWORD dl = lstrlen(url) + (DWORD) m_base_path.length() + 1;
-			LPWSTR abs_url = new WCHAR[dl];
-			HRESULT res = UrlCombine(m_base_path.c_str(), url, abs_url, &dl, 0);
-			if (res == E_POINTER)
-			{
-				delete abs_url;
-				abs_url = new WCHAR[dl + 1];
-				if (UrlCombine(m_base_path.c_str(), url, abs_url, &dl, 0) == S_OK)
-				{
-					out = abs_url;
-				}
-			}
-			else if (res == S_OK)
-			{
-				out = abs_url;
-			}
-			delete abs_url;
-		}
-	} else
-	{
-		if(PathIsURL(url))
-		{
-			out = url;
-		} else
-		{
-			DWORD dl = lstrlen(url) + 1;
-			LPWSTR abs_url = new WCHAR[dl];
-			HRESULT res = UrlCreateFromPath(url, abs_url, &dl, 0);
-			if (res == E_POINTER)
-			{
-				delete abs_url;
-				abs_url = new WCHAR[dl + 1];
-				if (UrlCreateFromPath(url, abs_url, &dl, 0) == S_OK)
-				{
-					out = abs_url;
-				}
-			}
-			else if (res == S_OK)
-			{
-				out = abs_url;
-			}
-			delete abs_url;
-		}
-	}
-	if(out.substr(0, 8) == L"file:///")
-	{
-		out.erase(5, 1);
-	}
-	if(out.substr(0, 7) == L"file://")
-	{
-		out.erase(0, 7);
-	}
-}
-
 void web_page::import_css( litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl )
 {
-	std::wstring css_url;
-	make_url_utf8(url.c_str(), baseurl.c_str(), css_url);
+	std::string css_url;
+	make_url(url.c_str(), baseurl.c_str(), css_url);
 
-	if(download_and_wait(css_url.c_str()))
+	if(download_and_wait(cairo_font::utf8_to_wchar(css_url.c_str()).c_str()))
 	{
 		LPSTR css = load_text_file(m_waited_file.c_str(), false, L"UTF-8");
 		if(css)
 		{
-			LPSTR css_urlA = cairo_font::wchar_to_utf8(css_url.c_str());
-			baseurl = css_urlA;
+			baseurl = css_url;
 			text = css;
-			delete css;
-			delete css_urlA;
 		}
 	}
 }
 
 void web_page::on_anchor_click( const char* url, const litehtml::element::ptr& el )
 {
-	std::wstring anchor;
-	make_url_utf8(url, NULL, anchor);
-	m_parent->open(anchor.c_str());
+	std::string anchor;
+	make_url(url, m_base_path.c_str(), anchor);
+	m_parent->open(cairo_font::utf8_to_wchar(anchor).c_str());
 }
 
 void web_page::set_cursor( const char* cursor )
 {
-	LPWSTR v = cairo_font::utf8_to_wchar(cursor);
-	if(v)
+	m_cursor = cairo_font::utf8_to_wchar(cursor);
+}
+
+void web_page::load_image(const char* src, const char* baseurl, bool redraw_on_ready)
+{
+	std::string url;
+	make_url(src, baseurl, url);
+	m_images.reserve(url);
+	if (PathIsURL(cairo_font::utf8_to_wchar(url).c_str()))
 	{
-		m_cursor = v;
-		delete v;
+		if (redraw_on_ready)
+		{
+			m_http.download_file(cairo_font::utf8_to_wchar(url).c_str(), new web_file(this, web_file_image_redraw));
+		}
+		else
+		{
+			m_http.download_file(cairo_font::utf8_to_wchar(url).c_str(), new web_file(this, web_file_image_rerender));
+		}
+	}
+	else
+	{
+		on_image_loaded(cairo_font::utf8_to_wchar(url).c_str(), cairo_font::utf8_to_wchar(url).c_str(), redraw_on_ready);
 	}
 }
 
-cairo_container::image_ptr web_page::get_image(LPCWSTR url, bool redraw_on_ready)
+void web_page::make_url(const char* url, const char* basepath, litehtml::string& out)
 {
-	cairo_container::image_ptr img;
-	if(PathIsURL(url))
+	auto urlW = cairo_font::utf8_to_wchar(url ? url : "");
+	auto basepathW = cairo_font::utf8_to_wchar(basepath ? basepath : "");
+
+	if (PathIsRelative(urlW.c_str()) && !PathIsURL(urlW.c_str()))
 	{
-		if(redraw_on_ready)
+		if (basepathW.empty())
 		{
-			m_http.download_file( url, new web_file(this, web_file_image_redraw) );
-		} else
-		{
-			m_http.download_file( url, new web_file(this, web_file_image_rerender) );
+			basepathW = cairo_font::utf8_to_wchar(m_base_path);
 		}
-	} else
-	{
-		img = cairo_container::image_ptr(new CTxDIB);
-		if(!img->load(url))
+		DWORD dl = (DWORD) urlW.length() + (DWORD) basepathW.length() + 1;
+		LPWSTR abs_url = new WCHAR[dl];
+		HRESULT res = UrlCombine(basepathW.c_str(), urlW.c_str(), abs_url, &dl, 0);
+		if (res == E_POINTER)
 		{
-			img = nullptr;
+			delete abs_url;
+			abs_url = new WCHAR[dl + 1];
+			if (UrlCombine(basepathW.c_str(), urlW.c_str(), abs_url, &dl, 0) == S_OK)
+			{
+				out = cairo_font::wchar_to_utf8(abs_url);
+			}
+		}
+		else if (res == S_OK)
+		{
+			out = cairo_font::wchar_to_utf8(abs_url);
+		}
+		delete abs_url;
+	}
+	else
+	{
+		if (PathIsURL(urlW.c_str()))
+		{
+			out = url;
+		}
+		else
+		{
+			DWORD dl = (DWORD) urlW.length() + 1;
+			LPWSTR abs_url = new WCHAR[dl];
+			HRESULT res = UrlCreateFromPath(urlW.c_str(), abs_url, &dl, 0);
+			if (res == E_POINTER)
+			{
+				delete abs_url;
+				abs_url = new WCHAR[dl + 1];
+				if (UrlCreateFromPath(urlW.c_str(), abs_url, &dl, 0) == S_OK)
+				{
+					out = cairo_font::wchar_to_utf8(abs_url);
+				}
+			}
+			else if (res == S_OK)
+			{
+				out = cairo_font::wchar_to_utf8(abs_url);
+			}
+			delete abs_url;
 		}
 	}
-	return img;
+	if (out.substr(0, 8) == "file:///")
+	{
+		out.erase(5, 1);
+	}
+	if (out.substr(0, 7) == "file://")
+	{
+		out.erase(0, 7);
+	}
 }
 
 void web_page::load( LPCWSTR url )
 {
-	m_url		= url;
+	m_url = cairo_font::wchar_to_utf8(url);
 	m_base_path	= m_url;
 	if(PathIsURL(url))
 	{
@@ -197,7 +171,7 @@ void web_page::on_document_loaded(LPCWSTR file, LPCWSTR encoding, LPCWSTR realUr
 {
 	if (realUrl)
 	{
-		m_url = realUrl;
+		m_url = cairo_font::wchar_to_utf8(realUrl);
 	}
 
 	char* html_text = load_text_file(file, true, L"UTF-8", encoding);
@@ -220,11 +194,10 @@ void web_page::on_document_error(DWORD dwError, LPCWSTR errMsg)
 	std::string txt = "<h1>Something Wrong</h1>";
 	if(errMsg)
 	{
-		LPSTR errMsg_utf8 = cairo_font::wchar_to_utf8(errMsg);
+		auto errMsg_utf8 = cairo_font::wchar_to_utf8(errMsg);
 		txt += "<p>";
 		txt += errMsg_utf8;
 		txt += "</p>";
-		delete errMsg_utf8;
 	}
 	m_doc = litehtml::document::createFromString(txt.c_str(), this);
 
@@ -233,10 +206,11 @@ void web_page::on_document_error(DWORD dwError, LPCWSTR errMsg)
 
 void web_page::on_image_loaded( LPCWSTR file, LPCWSTR url, bool redraw_only )
 {
-	cairo_container::image_ptr img = cairo_container::image_ptr(new CTxDIB);
-	if(img->load(file))
+	CTxDIB img;
+	if(img.load(file))
 	{
-		cairo_container::add_image(std::wstring(url), img);
+		cairo_surface_t* surface = dib_to_surface(img);
+		m_images.add_image(cairo_font::wchar_to_utf8(url), surface);
 		if(m_doc)
 		{
 			PostMessage(m_parent->wnd(), WM_IMAGE_LOADED, (WPARAM) (redraw_only ? 1 : 0), 0);
@@ -280,6 +254,11 @@ void web_page::on_waited_finished( DWORD dwError, LPCWSTR file )
 	SetEvent(m_hWaitDownload);
 }
 
+cairo_surface_t* web_page::get_image(const std::string& url)
+{
+	return m_images.get_image(url);
+}
+
 void web_page::get_client_rect( litehtml::position& client ) const
 {
 	m_parent->get_client_rect(client);
@@ -302,7 +281,7 @@ void web_page::release()
 
 void web_page::get_url( std::wstring& url )
 {
-	url = m_url;
+	url = cairo_font::utf8_to_wchar(m_url);
 	if(!m_hash.empty())
 	{
 		url += L"#";

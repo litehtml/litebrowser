@@ -1,25 +1,27 @@
 #pragma once
 
-#include "../containers/windows/cairo/cairo_container.h"
+#include "../containers/windows/cairo/windows_container.h"
 #include "../containers/windows/cairo/cairo_font.h"
+#include "../containers/cairo/cairo_images_cache.h"
 #include "tordexhttp.h"
 
 class CHTMLViewWnd;
 
-class web_page :	public cairo_container
+class web_page : public windows_container
 {
 	CHTMLViewWnd*				m_parent;
 	LONG						m_refCount;
 public:
 	tordex::http				m_http;
-	std::wstring				m_url;
+	std::string					m_url;
 	litehtml::document::ptr		m_doc;
 	std::wstring				m_caption;
 	std::wstring				m_cursor;
-	std::wstring				m_base_path;
+	std::string					m_base_path;
 	HANDLE						m_hWaitDownload;
 	std::wstring				m_waited_file;
 	std::wstring				m_hash;
+	cairo_images_cache			m_images;
 public:
 	web_page(CHTMLViewWnd* parent);
 	virtual ~web_page();
@@ -36,15 +38,16 @@ public:
 	void get_url(std::wstring& url);
 
 	// litehtml::document_container members
-	virtual	void		set_caption(const char* caption);
-	virtual	void		set_base_url(const char* base_url);
-	virtual void		import_css(litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl);
-	virtual	void		on_anchor_click(const char* url, const litehtml::element::ptr& el);
-	virtual	void		set_cursor(const char* cursor);
+	void set_caption(const char* caption) override;
+	void set_base_url(const char* base_url) override;
+	void import_css(litehtml::string& text, const litehtml::string& url, litehtml::string& baseurl) override;
+	void on_anchor_click(const char* url, const litehtml::element::ptr& el) override;
+	void set_cursor(const char* cursor) override;
+	void load_image(const char* src, const char* baseurl, bool redraw_on_ready) override;
+	void make_url(const char* url, const char* basepath, litehtml::string& out) override;
 
-	virtual void		make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out);
-	virtual cairo_container::image_ptr	get_image(LPCWSTR url, bool redraw_on_ready);
-	virtual void		get_client_rect(litehtml::position& client)  const;
+	cairo_surface_t* get_image(const std::string& url) override;
+	void get_client_rect(litehtml::position& client) const  override;
 private:
 	char*	load_text_file(LPCWSTR path, bool is_html, LPCWSTR defEncoding = L"UTF-8", LPCWSTR forceEncoding = NULL);
 	BOOL	download_and_wait(LPCWSTR url);

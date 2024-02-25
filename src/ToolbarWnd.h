@@ -1,5 +1,5 @@
 #pragma once
-#include "..\containers\windows\cairo\cairo_container.h"
+#include "..\containers\windows\cairo\windows_container.h"
 #include "dib.h"
 #include "el_omnibox.h"
 
@@ -7,7 +7,7 @@
 
 class CBrowserWnd;
 
-class CToolbarWnd : public cairo_container
+class CToolbarWnd : public windows_container
 {
 	HWND					m_hWnd;
 	HINSTANCE				m_hInst;
@@ -34,8 +34,7 @@ public:
 	void on_page_loaded(LPCWSTR url);
 
 	// cairo_container members
-	virtual void			make_url(LPCWSTR url, LPCWSTR basepath, std::wstring& out);
-	virtual cairo_container::image_ptr get_image(LPCWSTR url, bool redraw_on_ready);
+	cairo_surface_t* get_image(const std::string& url) override;
 
 	// litehtml::document_container members
 	virtual	void	set_caption(const char* caption);
@@ -45,6 +44,7 @@ public:
 	virtual	void	on_anchor_click(const char* url, const litehtml::element::ptr& el);
 	virtual	void	set_cursor(const char* cursor);
 	virtual std::shared_ptr<litehtml::element> create_element(const char* tag_name, const litehtml::string_map& attributes, const std::shared_ptr<litehtml::document>& doc);
+	virtual void	load_image(const char* src, const char* baseurl, bool redraw_on_ready);
 
 protected:
 	virtual void	OnCreate();
